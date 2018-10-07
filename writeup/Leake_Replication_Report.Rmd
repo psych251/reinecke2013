@@ -1,6 +1,6 @@
 ---
-title: "Replication of Study X by Sample & Sample (200x, Psychological Science)"
-author: "Replication Author[s] (contact information)"
+title: "Replication of \"Predicting Users' First Impressions of Website Aesthetics With a Quantification of Perceived Visual Complexity and Colorfulness\" by Reinecke et al. (2013, CHI)"
+author: "Mackenzie Leake (mleake@stanford.edu)"
 date: "`r format(Sys.time(), '%B %d, %Y')`"
 output:
   html_document:
@@ -14,8 +14,15 @@ output:
 
 ##Introduction
 
-[No abstract is needed.]  Each replication project will have a straightforward, no frills report of the study and results.  These reports will be publicly available as supplementary material for the aggregate report(s) of the project as a whole.  Also, to maximize project integrity, the intro and methods will be written and critiqued in advance of data collection.  Introductions can be just 1-2 paragraphs clarifying the main idea of the original study, the target finding for replication, and any other essential information.  It will NOT have a literature review -- that is in the original publication. You can write both the introduction and the methods in past tense.  
+For this project I chose the paper "Predicting Users' First Impressions of Website Aesthetics With a Quantification of Perceived Visual Complexity and Colorfulness" by Reinecke et al. This paper was published at CHI 2013, which is a publication venue that is very relevant to my research in HCI and computer graphics. I chose this paper on evaluating users' first impressions of websites because I am interested in learning several aspects of their methodology. I have never used MTurk to run experiments, though it is common in my research area, and this is something I would like to learn in this project. I am also interested in how the authors took something subjective like the visual appeal of websites and created more objective criteria to explore specific questions. This is relevant to my work as a CS PhD student, which focuses on building video editing systems. I am often tasked with developing computational models of creative decisions and evaluating users' perceptions and experiences using the tools I build.
 
+I am interested in replicating the initial experiments discussed in the section "Evaluation of Image Metrics" on pages 4-7 in the paper. Essentially, the researchers evaluate if they can use computational metrics of color and visual complexity to predict user ratings of these website qualities. To run these experiments they collected a set of 450 website image screenshots. These included 350 in English, 60 foreign websites, 20 grayscale images, and 20 websites that were nominated for Webby Awards. For a follow up paper the authors provided a zip file with all of these website images, and I am able to download and open these images. I would hope to use these same images in my replication project. The researchers showed each participant 30 website images in random order for 500ms and asked each participant to rate each website on a 9-point Likert scale from "not at all colorful" to "very colorful" and "not at all complex" to "very complex." They also collected demographic data, including age, gender, education level, and country of residence, though their analysis indicates that none of these demographic variables affected their model of colorfulness and visual complexity. 
+
+To replicate their experiment I plan to start with the same website images they provide and use their code for computing image metrics. Though the authors provide their (not particularly well-documented) Java code for computing visual features for website images and describe the different metrics, I expect there to be some challenge in running this code and understanding the different metrics. I will then need to set up an experiment on MTurk to show the provided website images to people for the same time period (500ms). Since I have not run a MTurk experiment before, I think that setting up the experiment and showing images for a fixed amount of time to participants will require some learning on my part. Once I compute the image metrics and collect data on MTurk, I will need to run regression models to compare the predicted colorfulness and visual complexity data with the observations from the MTurk data. The authors discuss using multiple linear regression with backward elimination, which is not a statistical technique I have used before. Though replicating this project has several challenges in terms of figuring out their computational image metrics, running a MTurk experiment, and using unfamiliar statistical techniques, I think that each of these challenges is relevant to other challenges I will face in my own research. 
+
+Link to repo: [link](https://github.com/mleake/reinecke2013)  
+Link to paper: [link](https://github.com/mleake/reinecke2013/blob/master/original_paper/reinecke2013.pdf)  
+(note: My Github account is part of the Stanford HCI organization so I can't send links to private repos to non-members. I will upload the .zip repo and/or add the TAs as collaborators.)
 
 ##Methods
 
