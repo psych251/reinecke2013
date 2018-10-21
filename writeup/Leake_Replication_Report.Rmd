@@ -23,9 +23,9 @@ Link to repo: [link](https://github.com/mleake/reinecke2013)
 Link to paper: [link](https://github.com/mleake/reinecke2013/blob/master/original_paper/reinecke2013.pdf)
 
 ##Introduction
-In their original paper "Predicting Users' First Impressions of Website Aesthetics With a Quantification of Perceived Visual Complexity and Colorfulness" Reinecke et al. propose a method for predicting users' first impressions of a website's appearance. This replication focuses on the authors' first two experiments, which develop a computational model for predicting a website's perceived colorfulness and visual complexity based on automatically detected low-level image features. The prior literature and additional studies completed by the authors demonstrate the importance these two design features have in determining users' first impressions of website aesthetics.
+In their original paper "Predicting Users' First Impressions of Website Aesthetics With a Quantification of Perceived Visual Complexity and Colorfulness" Reinecke et al. propose a computational model for predicting users' initial reactions to a website's appearance. This replication report focuses on replicating the authors' computational models for predicting a website's perceived colorfulness and visual complexity based on automatically detected low-level image features. The prior literature and additional studies completed by the authors demonstrate the importance these two design features have in determining users' first impressions of website aesthetics.
 
-In this replication of the first two experiments conducted by Reinecke et al. (2013), we aim to reproduce the methodology used in the original paper. First, we use the authors' provided code to compute the low-level image features of the website images, which the authors also have made publicly available. Then, we conduct an experiment on MTurk, asking users to rate the colorfulness and visual complexity of these images. From the data we develop a computational model relating the low-level image statistics to users' ratings of colorfulness and visual complexity, as the original authors did.
+In this replication of the colorfulness and visual complexity experiments conducted by Reinecke et al. (2013), we aim to reproduce the methodology used in the original paper. First, we use the authors' provided code to compute the low-level image features of the website images, which the authors also have made publicly available. Then, we conduct an experiment on MTurk, asking users to rate the colorfulness and visual complexity of these images. From the data we develop computational models relating the low-level image statistics to users' ratings of colorfulness and visual complexity, as the original authors did.
 
 ##Methods
 
@@ -38,15 +38,15 @@ TEMPLATE TEXT: Original effect size, power analysis for samples to achieve 80%, 
 
 ###Planned Sample
 We use a similar sample to the participant sample selected in the original paper, described as:
-"Our final data consist of 184 participants (96 female) aged between 15 and 58 years (mean = 21.1) for the colorfulness experiment and 122 participants (60 female) between 16 and 70 years (mean = 32.3) for the complexity experiment"
+"Our final data consist of 184 participants (96 female) aged between 15 and 58 years (mean = 21.1) for the colorfulness experiment and 122 participants (60 female) between 16 and 70 years (mean = 32.3) for the complexity experiment."
 
 We also follow the exclusion criteria specified in the original paper:
 "Participants were excluded from the analysis if they had previously participated in the same study and/or did not have normal or corrected-to-normal vision."
 
-We determine if participants should be excluded based on checking their worker ID to see if they had previously completed the task before gaining access to the task and asking them about their vision at the end of the study.
+We determine if participants should be excluded by checking their worker ID to see if they previously completed the task before gaining access to the task and asking them about their vision at the end of the study.
 
 ###Materials
-We use the same materials as the original authors. This includes the 450 website images provided by the authors as well as the code for computing visual features, which are available [here](http://www.labinthewild.org/data/index.php).
+We use the same materials as the original authors. This includes the 450 website images provided by the authors as well as the code for computing visual features, both of which are available [here](http://www.labinthewild.org/data/index.php).
 
 ###Procedure	
 We follow the procedure from the original article described as:
@@ -60,37 +60,28 @@ two evaluation phases, we gave a short practice phase during
 which all participants were asked to evaluate a fixed set
 of five websites, given in randomized order. We also collected demographic information about each participant, such as gender, age, education level, and current country of residence, in order to control for these factors in the analysis."
 
-The only exception we made to this procedure was running the study on MTurk as opposed to Lab in the Wild.
+The only exception we made to this procedure is running the study on MTurk as opposed to Lab in the Wild.
 
 ###Analysis Plan
-The goal of this analysis is to replicate the first set of experiments in Reinecke et. al. For all analyses we follow the data exclusion criteria the original authors describe: "We additionally excluded websites that had received three or fewer ratings (due to the random assignment to participants), or where the standard error of their mean complexity was ≥ 0.75."
+The goal of this analysis is to replicate the first set of experiments in Reinecke et. al, 2013. For all analyses we follow the data exclusion criteria the original authors describe: "We additionally excluded websites that had received three or fewer ratings (due to the random assignment to participants), or where the standard error of their mean complexity was ≥ 0.75."
 
-The first analysis to perform is to measure the consistency of users' ratings of website colorfulness and visual complexity across two different trials. To do this we compute the standard deviation of the difference in website ratings across the two trials, in which each participant is shown the same 30 website images a second time in a different order and asked to rate the images on visual complexity and colorfulness again.
+The first analysis measures the consistency of users' ratings of website colorfulness and visual complexity across two different trials. In the second trial each participant is shown the same 30 website images in a different order and asked to rate the images on visual complexity and colorfulness again. We compute the standard deviation of the difference in website ratings across the two trials. 
 
-The second analyses to perform are the two ANOVAs (one for colorfulness and one for visual complexity) that the original authors describe:
-"To analyze possible differences between the ratings of different
-population groups in our sample, we applied two mixed effects
-ANOVAs with the demographic variables as fixed effects,
-StimulusID and ParticipantID as random effects, and
-the mean rating on colorfulness/complexity as the dependent
-variable. None of the demographic variables (country of current
-residence, gender, age, and education level) had a significant
-main effect on mean colorfulness or mean complexity,
-suggesting that the perception of colorfulness and visual complexity is more or less universal. People as a whole seem to
-make very similar judgements on these website characteristics,
+The second set of analyses are the two ANOVAs (one for colorfulness and one for visual complexity) that the original authors describe:
+"To analyze possible differences between the ratings of different population groups in our sample, we applied two mixed effects ANOVAs with the demographic variables as fixed effects, StimulusID and ParticipantID as random effects, and the mean rating on colorfulness/complexity as the dependent variable. None of the demographic variables (country of current residence, gender, age, and education level) had a significant main effect on mean colorfulness or mean complexity, suggesting that the perception of colorfulness and visual complexity is more or less universal. People as a whole seem to make very similar judgements on these website characteristics,
 independent of their demographic background."
 
 The two primary analyses to perform are computing the prediction models for perceived colorfulness and visual complexity. For these analyses we use multiple linear regression with backward elimination. The model begins with seven different image metrics and 16 different HTML color percentages, and then different variables are removed according to the process described in the original paper: "In this method, all predictors are initially added to the model, and iteratively removed if they do not make a statistically significant contribution to how well the model predicts the outcome variable (the ratings, in our case). At each step, the remaining predictors are reassessed in terms of their contribution to the newly calculated model." The goal of these analyses is to replicate the paper's models for predicting users' ratings of colorfulness and complexity based on specific low-level image features generated computationally.
 
 <span style="color:red">
 Notes/Questions: <br>
-* For budget reasons we may not run the first analysis (the two trials of showing participants the images twice to make sure participants are consistent in their ratings)  <br>
-* Should I run the ANOVAs to verify that demographic variables don't affect users' judgments of colorfulness and complexity? The value in running these analyses is more validating one of the assumptions the original authors made about which variables to include in their model rather than contributing to their primary models. <br>
-* Because the original study used Lab in the Wild rather than MTurk they had access to participants from a wider variety of geographic locations. Other experiments in the original paper used this information, but for the experiments I focus on it doesn't seem to matter as much. <br>
+* For budget reasons we may not run the first analysis (the two trials of showing participants the same images to make sure participants are consistent in their ratings)<br>
+* Should I run the ANOVAs to verify that demographic variables don't affect users' judgments of colorfulness and complexity? The value in running these analyses is more validating a decision the original authors made about which variables to include in their model rather than contributing to their primary models. <br>
+* Because the original study used Lab in the Wild rather than MTurk the original authors had access to participants from a wider variety of geographic locations. Other experiments in the original paper used this information, but for the experiments I focus on it doesn't seem to matter as much. <br>
 </span>
 
 ###Differences from Original Study
-All experiments were run on MTurk as opposed to Lab in the Wild, which has an unpaid citizen science reward model. Characterizing the users on Lab in the Wild is an area of ongoing research. So far researchers have found that participants come from almost every country in the world and users are motivated to participate because they get to see how their results compare to others (Reinecke & Gajos, 2015). We do not anticipate that the difference in experiment platform will influence the results in this study. The original study participants were as young as 15, but in this replication, the minimum age is set at 18, as required by MTurk. One step in the analysis of this experiment is determining if users' demographic backgrounds influences their judgment of website colorfulness and visual complexity. The original finding is that these demographic variables do not influence these aesthetic judgments. We aim to replicate this finding as part of our analysis.
+All experiments were run on MTurk as opposed to Lab in the Wild, which has an unpaid citizen science reward model. Characterizing participants on Lab in the Wild is an area of ongoing research. So far researchers have found that participants come from almost every country in the world and users are motivated to participate because they get to see how their results compare to others (Reinecke & Gajos, 2015). We do not anticipate that the difference in experiment platform will influence the results in this study. The original study participants were as young as 15, but in this replication the minimum age is set at 18, as required by MTurk. One step in the analysis of this experiment is determining if users' demographic backgrounds influence their judgment of website colorfulness and visual complexity. The original finding is that these demographic variables do not influence these aesthetic judgments. We aim to replicate this finding as part of our analysis.
 
 ### Methods Addendum (Post Data Collection)
 
@@ -109,15 +100,15 @@ You can comment this section out prior to final report with data collection.
 ### Data preparation
 We collect data for both the computational image statistics as well as users' ratings of website image colorfulness and visual complexity. First, we compute the various image statistics using the authors' provided code. Each of these different image measurements is treated as a single variable in our regression. For each user we collect their age, country of residence, native language, highest level of education, and if they have normal or corrected-to-normal vision. We exclude all data from participants without normal or corrected-to-normal vision.
 
-For all of the analysis, the data are organized in tidy format with the columns of the data correspond to ParticipantID, WebsiteID, TrialID, ColorfulnessRating, and ComplexityRating. Each row is a different observation for user data (i.e., each participant, website, and trial matching). We merge the user data with the computational image metrics by adding columns to the data for each of the computational image metrics (16 HTML colors and 7 additional derived metrics).
+For all of the analyses, the data are organized in tidy format with the columns of the data corresponding to ParticipantID, WebsiteID, TrialID, ColorfulnessRating, and ComplexityRating. Each row is a different observation for user data (i.e., each participant, website, and trial matching). We merge the user data with the computational image metrics by adding columns to the data for each of the computational image metrics (16 HTML colors and 7 additional derived metrics).
 
 Next, we determine which data to exclude from the analyses based on the original study's exclusion criteria. First, we compute which websites had three or fewer ratings and eliminate this data. Next, we compute the standard error of each website's mean complexity across all participants. If this value is greater than or equal to 0.75, we eliminate this data as well. 
 
-For the first analysis, which examines user's consistency in ratings for colorfulness and visual complexity, we compute the difference for each participant's ratings of colorfulness and complexity between the two trials. Next, we take standard deviation of this difference in the ratings between the two trials to indicate the reliability between participants' ratings across the two test trials.
+For the first analysis, which examines participants' consistency in ratings for colorfulness and visual complexity, we compute the difference for each participant's ratings of colorfulness and complexity between the two trials for the same website image. Next, we take standard deviation of this difference in the ratings between the two trials and report this value for colorfulness and complexity.
 
-For the second analyses, which examine the differences between the ratings for people from different demographic backgrounds, we prepare the data to run two mixed-effects ANOVAs with country of current residence, gender, age, and education level as fixed effects, and WebsiteID and ParticipantID as random effects, and mean rating of colorfulness and complexity as the dependent variable. 
+The second set of analyses examine whether there are differences in colorfulness and complexity ratings among people from different demographic backgrounds. We prepare the data to run two mixed-effects ANOVAs with country of current residence, gender, age, and education level as fixed effects, WebsiteID and ParticipantID as random effects, and mean rating of colorfulness or complexity as the dependent variable. We then examine if any of the demographic variables has a significant main effect on mean colorfulness or mean complexity.
 
-For the primary analyses, developing a model to compare the image metrics to users' ratings of colorfulness and complexity, we prepare our data for running multiple linear regression with backward elimination. To do this we start with all of our low-level image features as the independent variables and colorfulness or visual complexity as the dependent variable. We iteratively remove features if they are not statistically significant and update the model.
+For the primary analyses, developing a model to compare the image metrics to users' ratings of colorfulness and complexity, we prepare our data for running multiple linear regression with backward elimination. To do this we start with all of our low-level image features as the independent variables and colorfulness or visual complexity as the dependent variable. We iteratively remove image feature variables if they do not make statistically significant contributions to the model and update the model.
 
 <span style="color:red">
 Questions: <br>
@@ -137,13 +128,13 @@ Questions: <br>
 ```
 
 ### Confirmatory analysis
-We first confirm the initial experiments' findings that participants' ratings of colorfulness and visual complexity are consistent across different trials and that demographic variables do not influence users' judgments of these image metrics. To examine users' consistency in ratings across trials we compute the standard deviation of the difference in ratings across the two trials. To determine if demographic variables influence participants' judgments of colorfulness and complexity we examine if these demographic variables have a significant main effect on colorfulness and complexity ratings.
+We first confirm the initial experiments' findings that participants' ratings of colorfulness and visual complexity are consistent across different trials and that demographic variables do not influence users' judgments of these image metrics. To examine users' consistency in ratings across trials, we compute the standard deviation of the difference in ratings across the two trials. To determine if demographic variables influence participants' judgments of colorfulness and complexity we examine if these demographic variables have a significant main effect on colorfulness and complexity ratings.
 
-The main contribution of the original paper's experiments that are the focus of this replication report are two models predicting users' ratings of a website's colorfulness and visual complexity from low-level image features of the website. To test these models we need to determine if we can produce a similar model in our experiment. To do this we generate a multiple linear regression and use backwards elimination to eliminate not statistically significant image features.
+The main contribution of the original paper's experiments that are the focus of this replication report are two models predicting users' ratings of a website's colorfulness and visual complexity from low-level image features of the website. To test these models we need to determine if we can produce a similar model in our experiment. To do this we use a multiple linear regression and use backwards elimination to eliminate not statistically significant image features. We then compare the models from this replication to the models the original authors provide.
 
 <span style="color:red">
 Questions: <br>
-* How do I determine if I have successfully replicated the model? What's a good tool to use to compare these? It seems like two important considerations are if I find the same image features are significant and if these image features contribute the same amount to the perception of colorfulness/complexity.<br>
+* How do I determine if I have successfully replicated the model? What's a good tool to use to compare my model to the original (comparing two multiple linear regressions)? It seems like two important considerations are if I find the same image features are significant and if these image features contribute the same amount to the perception of colorfulness/complexity.
 </span>
 
 ###Exploratory analyses
