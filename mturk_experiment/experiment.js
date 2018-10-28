@@ -83,35 +83,54 @@ function getImageForTrials() {
   var englishImagesTrial1 = getImagePaths("english", getRandomIntegers(22, 350));
   var foreignImagesTrial1 = getImagePaths("foreign", getRandomIntegers(4, 60));
   var grayscaleImagesTrial1 = getImagePaths("grayscale", getRandomIntegers(4, 20));
+  var practiceImages = getImagePaths("practice", [0, 1, 2, 3, 4]);
 
   var imagesTrial1 = [].concat(englishImagesTrial1,foreignImagesTrial1, grayscaleImagesTrial1)
   var imagesTrial1_copy = [].concat(imagesTrial1);
-  var imagesTrial2 = shuffle(imagesTrial1_copy);
-  return {"trial1": imagesTrial1, "trial2": imagesTrial2}
+  var imagesTrial2_copy = [].concat(imagesTrial1);
+  var imagesTrial1 = shuffle(imagesTrial1_copy);
+  var imagesTrial2 = shuffle(imagesTrial2_copy);
+  return {"trial1": imagesTrial1, "trial2": imagesTrial2, "practice": practiceImages}
 }
 
 
 // ## Configuration settings
+var masterData = {}
 var myKeyBindings = [
-      {"1": 1, "2": 2, "3":3, "4": 4, "5": 5, "6": 6, "7": 7}];
+      {"1": 1, "2": 2, "3":3, "4": 4, "5": 5, "6": 6, "7": 7, "8": 8, "9": 9}];
+
+var trialNums = Array.apply(null, {length: 65}).map(Number.call, Number);
+var randomImages = getImageForTrials()
+var imageOrder = (randomImages["practice"]).concat(randomImages["trial1"], randomImages["trial2"]);
+console.log(imageOrder)
+var experimentOptions = ["colorfulness", "complexity"];
+var whichExperiment = randomElement(experimentOptions);
 
 // Show the instructions slide -- this is what we want subjects to see first.
 showSlide("instructions");
+$("#basicinstructions").text(whichExperiment);
 
-var trialNums = Array.apply(null, {length: 60}).map(Number.call, Number);
-var imageOrderTrial1 = getImageForTrials()["trial1"];
-var imageOrderTrial2 = getImageForTrials()["trial2"];
-
+var totalTrialNum = 0;
+var currentImage = "";
+var canChange = false;
 // ## The main event
 // I implement the sequence as an object with properties and methods. The benefit of encapsulating everything in an object is that it's conceptually coherent (i.e. the <code>data</code> variable belongs to this particular sequence and not any other) and allows you to **compose** sequences to build more complicated experiments. For instance, if you wanted an experiment with, say, a survey, a reaction time test, and a memory test presented in a number of different orders, you could easily do so by creating three separate sequences and dynamically setting the <code>end()</code> function for each sequence so that it points to the next. **More practically, you should stick everything in an object and submit that whole object so that you don't lose data (e.g. randomization parameters, what condition the subject is in, etc). Don't worry about the fact that some of the object properties are functions -- mmturkey (the Turk submission library) will strip these out.**
-
 var experiment = {
-  
   // Experiment-specific parameters - which keys map to odd/even
   keyBindings: myKeyBindings,
   // An array to store the data that we're collecting.
   data: [],
   trials: trialNums,
+  currentTrialNum: 0,
+  experimentType: whichExperiment,
+  decideSlide: function(){
+    if (experiment.experimentType == "colorfulness") {
+      showSlide("overview-colorful")
+    }
+    else {
+      showSlide("overview-complexity")
+    }
+  },
   
   // The function that gets called when the sequence is finished.
   end: function() {
@@ -123,63 +142,103 @@ var experiment = {
   showDemographicQuestions: function() {
     showSlide("demographics");
   },
-  submitform: function() {
-    var formData = JSON.stringify($("#demo").serializeArray());
-    console.log(formData)
+  submitform: function(id) {
+    masterData["imageOrder"] = imageOrder;
+    masterData["experimentType"] = whichExperiment;
+    if (id == "demo") {
+      var formData = JSON.stringify($("#"+id).serializeArray());
+      masterData["demographics"] = formData;
+    }
+    else {
+      var existingTrials = Object.keys(masterData)
+      if (existingTrials.indexOf(totalTrialNum) < 0) {
+        masterData[totalTrialNum] = {}
+      }
+      var formData = $("#"+id).serializeArray()[0]
+      if (typeof formData == 'undefined') {
+        var userScore = null;
+      }
+      else {
+        var userScore = parseInt(formData["value"]);
+      }
+      masterData[totalTrialNum]["userScore"] = userScore;
+      masterData[totalTrialNum]["totalTrialNum"] = totalTrialNum;
+      masterData[totalTrialNum]["currentTrialNum"] = currentTrialNum;
+      masterData[totalTrialNum]["imagePath"] = currentImage;
+  }
+  console.log(masterData)
+  },
+  clearLikert: function() {
+    var ids = ["q1", "q2", "q3", "q4", "q5", "q6", "q7", "q8", "q9"]
+    for (var i = 0; i< ids.length; i++){
+      document.getElementById(ids[i]).checked = false;
+    }
+  },
+  evaluate: function(trialNum, partNum, denom) {
+    showSlide("evaluate")
+    $("#numbereval").text(trialNum);
+    $("#instructionstype").text(experiment.experimentType);
+    $("#partnumeval").text(partNum);
+    $("#denomeval").text(denom);
+    if (experiment.experimentType == "colorfulness") {
+      $("#q1label").text("Not colorful at all");
+      $("#q9label").text("Very colorful");
+    }
+    else {
+      $("#q1label").text("Very simple");
+      $("#q9label").text("Very complex");
+    }
+    
+    experiment.clearLikert();
   },
   // The work horse of the sequence - what to do on every trial.
   next: function() {
     // If the number of remaining trials is 0, we're done, so call the end function.
     if (experiment.trials.length == 0) {
+      console.log("in next")
       experiment.end();
+      return;
+    }
+
+    if (experiment.trials.length == 60 && !canChange) {
+      canChange = true;
+      showSlide("beginrealtrial");
+      return;
+    }
+
+    if (experiment.trials.length == 30 && canChange) {
+      canChange = false;
+      showSlide("break");
       return;
     }
     
     // Get the current trial - <code>shift()</code> removes the first element of the array and returns it.
-    var n = experiment.trials.shift();
-    var newImage = imageOrderTrial1.shift()
-    console.log(n, newImage)
-    
+    totalTrialNum = experiment.trials.shift();
+    currentTrialNum = 65 - experiment.trials.length;
+    if (currentTrialNum > 35) {
+      currentTrialNum = currentTrialNum - 35;
+    }
+    else if (currentTrialNum > 5) {
+      currentTrialNum = currentTrialNum - 5;
+    }
+    console.log("current trial num", currentTrialNum, experiment.trials.length)
+    var partNum = 0;
+    var denom = 30;
+    if (experiment.trials.length >= 60) {
+      denom = 5;
+    }
+    else if (experiment.trials.length >= 30) {
+      partNum = 1;
+    }
+    else{
+      partNum = 2
+    }
+    currentImage = imageOrder[totalTrialNum];
     showSlide("stage");
-    // Display the number stimulus.
-    $("#number").text(n);
-    $("#stimulusimage").attr("src", newImage);
-
-    
-    // Get the current time so we can compute reaction time later.
-    var startTime = (new Date()).getTime();
-    
-    // Set up a function to react to keyboard input. Functions that are used to react to user input are called *event handlers*. In addition to writing these event handlers, you have to *bind* them to particular events (i.e., tell the browser that you actually want the handler to run when the user performs an action). Note that the handler always takes an <code>event</code> argument, which is an object that provides data about the user input (e.g., where they clicked, which button they pressed).
-    var keyPressHandler = function(event) {
-      // A slight disadvantage of this code is that you have to test for numeric key values; instead of writing code that expresses "*do X if 'Q' was pressed*", you have to do the more complicated "*do X if the key with code 80 was pressed*". A library like [Keymaster](http://github.com/madrobby/keymaster) lets you write simpler code like <code>key('a', function(){ alert('you pressed a!') })</code>, but I've omitted it here. Here, we get the numeric key code from the event object
-      var keyCode = event.which;
-      
-      if (keyCode != 81 && keyCode != 80) {
-        // If a key that we don't care about is pressed, re-attach the handler (see the end of this script for more info)
-        $(document).one("keydown", keyPressHandler);
-        
-      } else {
-        // If a valid key is pressed (code 80 is p, 81 is q),
-        // record the reaction time (current time minus start time), which key was pressed, and what that means (even or odd).
-        var endTime = (new Date()).getTime(),
-            key = (keyCode == 80) ? "p" : "q",
-            userParity = experiment.keyBindings[key],
-            data = {
-              stimulus: n,
-              accuracy: realParity == userParity ? 1 : 0,
-              rt: endTime - startTime
-            };
-        
-        experiment.data.push(data);
-        // Temporarily clear the number.
-        $("#number").text("");
-        // Wait 500 milliseconds before starting the next trial.
-        setTimeout(experiment.next, 500);
-      }
-    };
-    
-    // Here, we actually bind the handler. We're using jQuery's <code>one()</code> function, which ensures that the handler can only run once. This is very important, because generally you only want the handler to run only once per trial. If you don't bind with <code>one()</code>, the handler might run multiple times per trial, which can be disastrous. For instance, if the user accidentally presses P twice, you'll be recording an extra copy of the data for this trial and (even worse) you will be calling <code>experiment.next</code> twice, which will cause trials to be skipped! That said, there are certainly cases where you do want to run an event handler multiple times per trial. In this case, you want to use the <code>bind()</code> and <code>unbind()</code> functions, but you have to be extra careful about properly unbinding.
-    $(document).one("keydown", keyPressHandler);
-    
+    $("#partnum").text(partNum);
+    $("#number").text(currentTrialNum);
+    $("#denom").text(denom);
+    $("#stimulusimage").attr("src", currentImage);
+    setTimeout(experiment.evaluate, 500, currentTrialNum, partNum, denom);
   }
 }

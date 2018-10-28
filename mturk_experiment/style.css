@@ -49,9 +49,6 @@ button[disabled] {
 	cursor: not-allowed;
 }
 
-
-
-
 /* ## Experiment-specific styles */
 /* This stuff will vary by experiment. */
 
@@ -73,10 +70,11 @@ button[disabled] {
 }
 
 .block-text {
-  width: 500px;
+  max-width: 400px;
   text-align: justify;
   margin: 0 auto;
   margin-bottom: 1em;
+  display: inline-block;
 }
 
 #legal {
@@ -85,11 +83,70 @@ button[disabled] {
   font-size: 0.8em;
 }
 
-#number {
-  font-size: 42px;
-  font-family: Arial, sans-serif;
+#imagennumtext {
+  vertical-align: top;
   margin: 0 auto;
   text-align: center;
-  width: 100px;
+  margin-top: 10px;
+  margin-bottom: 20px;
+}
+
+#number {
+  margin: 0 auto;
+  text-align: center;
+  margin-top: 10px;
+  margin-bottom: 20px;
+  display:inline;
+}
+
+#numbereval {
+  margin: 0 auto;
+  text-align: center;
+  margin-top: 10px;
+  margin-bottom: 20px;
+  display:inline;
+}
+
+#partnnumtext {
+  vertical-align: top;
+  margin: 0 auto;
+  text-align: center;
   margin-top: 100px;
+  margin-bottom: 10px;
+}
+
+#partnum {
+  margin: 0 auto;
+  text-align: center;
+  margin-top: 100px;
+  margin-bottom: 10px;
+  display:inline;
+}
+
+#partnumeval {
+  margin: 0 auto;
+  text-align: center;
+  margin-top: 100px;
+  margin-bottom: 10px;
+  display:inline;
+}
+
+#stimulusimage {
+  width: 600px;
+}
+
+#colorfulnessimage{
+	width: 504px;
+	height: auto;
+	display: block;
+	margin: 0 auto;
+}
+
+#examplescreenshotimage {
+	width: 300px;
+	text-align: center;
+}
+
+.examplescale {
+	border: 2px solid #ccc;
 }
