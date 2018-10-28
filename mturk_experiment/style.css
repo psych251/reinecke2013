@@ -142,6 +142,13 @@ button[disabled] {
 	margin: 0 auto;
 }
 
+#complexityimage{
+	width: 504px;
+	height: auto;
+	display: block;
+	margin: 0 auto;
+}
+
 #examplescreenshotimage {
 	width: 300px;
 	text-align: center;

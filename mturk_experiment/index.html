@@ -1,11 +1,7 @@
 <!-- ## Introduction -->
-<!-- This example experiment is a categorization task. On every trial, the subject sees a number and has to press a key depending on whether the number is even or odd. There are two between-subjects independent variables: which keys get pressed (either P for even and Q for odd or vice versa) and the trial order (subjects see one of two fixed orders). There are two dependent variables: accuracy and reaction time. -->
+<!-- This experiment code has been adapted from Long Ouyang's even-odd example experiment. This experiment also follows the design of this experiment on Lab in the Wild: http://www.labinthewild.org/studies/perceptual_models/ -->
+<!-- In this experiment each user views 30 websites and rates them on colorfulness or visual complexity (assignment is random to each user) in the first trial. In the next trial, they are shown the same 30 websites in a different order. Users rate the websites on a 1-9 likert scale for colorfulness or complexity. -->
 
-<!-- This example assumes that you already know the basics of HTML, JavaScript (JS), and CSS. If not, [the Codecademy tutorials](http://www.codecademy.com/tracks/javascript) are a useful starting point. -->
-
-<!-- This page contains source code on the right and explanations/commentary on the left. You can jump around the different files by using the "Jump To ..." menu in the upper right corner. You will also want to refer to <a href="../even-odd.html">the actual experiment</a>. -->
-
-<!-- ## Code -->
 <html>
 <head>
 	<title>Website Design Experiment</title>
@@ -14,27 +10,26 @@
 	
 	<!-- Include my library, [mmturkey][mmturkey], which manages submitting data to Mechanical Turk. This defines a global object, <code>turk</code>, and attaches five properties to it, <code>hitId</code>, <code>assignmentId</code>, <code>workerId</code>, <code>previewMode</code>, and <code>turkSubmitTo</code>. It also provides a single method, <code>submit(data)</code>, which you use to submit data to Turk. If no submission URL has been provided (because, e.g. you're testing your code outside of the Turk environment), <code>submit</code> displays what would have been submitted (without, obviously, any Turk-specific variables like <code>workerId</code> and <code>assignmentId</code>).  -->
 	<!-- [mmturkey]: http://github.com/longouyang/mmturkey -->
-	<!-- <script src="mmturkey-0.6.js"></script> -->
+	<script src="mmturkey-0.6.js"></script>
 	
 	<!-- Include the cascading style sheet (CSS), which lets us separate style from content. This stylesheet is important because it defines the notion of a **slide** and also makes things look nicer, which subjects appreciate. It's worth looking at the [source code](style.html). -->
 	<link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
-<!-- The instructions slide. -->
+<!-- The initial instructions slide. -->
 <div class="slide" id="instructions">
   <div style="width: 500px; margin: 0 auto; text-align: center; background-color: #8C1516; padding: 20px 15px 10px 10px">
     <img src="images/stanford.png" height="46" width="360" alt="Stanford University">
   </div>
 	<p style="display:inline">In this experiment, you will see screenshots of various <br> websites and  be asked to rate the </p><p id = "basicinstructions" style="display:inline">{{}}</p><p style="display:inline"> of them.</p>
-	<!-- Button to start the experiment. <code>this.blur()</code> removes the focus from the button, if the user pressed the button by using the keyboard, rather than the mouse. -->
 	<div>
-	<button type="button" onclick="this.blur(); experiment.showDemographicQuestions()">Start</button>
+	<button type="button" onclick="this.blur(); showSlide('demographics');">Start</button>
 	</div>
 	<!-- Legal blurb that we're required to show. -->
 	<p class="block-text" id="legal">[Disclaimer text]</p>
 </div>
-<!-- The "stage" slide - where the bulk of the experiment will be displayed. Again, note the use of <code>{{}}</code>. -->
+<!-- The "demographics" slide - where users answer several deomgraphics questions -->
 <div class="slide" id="demographics">
 <form name = "demo" id = "demo">
 <h1>Background Questions</h1>
@@ -100,7 +95,7 @@ Do you have normal or corrected-to-normal vision (including normal color vision)
 </div>
 </div>
 
-<!-- The "pre-info" slide - where the bulk of the experiment will be displayed. Again, note the use of <code>{{}}</code>. -->
+<!-- The "overview" slide for the colorfulness experiment - This provides info about the experiment and rating the colorfulness of each image -->
 <div class="slide" id="overview-colorful">
 	<h1>Colorfulness Test </h1>
 	 <p>In this phase, you will be shown a series of website screenshots. You will then rate the colorfulness of each image on a scale from 1 (not at all colorful) to 9 (very colorful). </p>
@@ -110,7 +105,7 @@ Do you have normal or corrected-to-normal vision (including normal color vision)
 	</div>
 </div>
 
-<!-- The "pre-info" slide - where the bulk of the experiment will be displayed. Again, note the use of <code>{{}}</code>. -->
+<!-- The "overview" slide for the complexity experiment - This provides info about the experiment and rating the complexity of each image -->
 <div class="slide" id="overview-complexity">
 	<h1>Complexity Test </h1>
 	 <p>In this phase, you will be shown a series of website screenshots. You will then rate the colorfulness of each image on a scale from 1 (very simple) to 9 (very complex). </p>
@@ -120,7 +115,7 @@ Do you have normal or corrected-to-normal vision (including normal color vision)
 	</div>
 </div>
 
-<!-- The "pre-info" slide - where the bulk of the experiment will be displayed. Again, note the use of <code>{{}}</code>. -->
+<!-- The "more info" slide for the colorfulness experiment - This provides info about what colorfulness means-->
 <div class="slide" id="moreinfo-colorful">
 	<h1>What is colorfulness?</h1>
 	<p>Colorfulness refers to the <b>number</b> and <b>vividness</b> of colors on a page.</p>
@@ -131,18 +126,18 @@ Do you have normal or corrected-to-normal vision (including normal color vision)
 	</div>
 </div>
 
-<!-- The "pre-info" slide - where the bulk of the experiment will be displayed. Again, note the use of <code>{{}}</code>. -->
+<!-- The "more info" slide for the complexity experiment - This provides info about what visual complexity means-->
 <div class="slide" id="moreinfo-complexity">
 	<h1>What is complexity?</h1>
 	<p>Visual Complexity refers to the <b>information density</b> or <b>clutteredness</b> of a particular content. Note that not only texts, but images can also contain information.</p>
 	<p>Shown below is an illustrative description of the term</p>
-	<img id = "colorfulnessimage" src = "images/complexity.png"></img>
+	<img id = "complexityimage" src = "images/complexity.png"></img>
 	<div align="center">
 	<button type="button" onclick="this.blur();showSlide('practice-instructions-complexity')">Next</button>
 	</div>
 </div>
 
-<!-- The "pre-info" slide - where the bulk of the experiment will be displayed. Again, note the use of <code>{{}}</code>. -->
+<!-- The "practice instructions" slide for the colorfulness experiment - This provides the instructions for completing the practice colorfulness task-->
 <div class="slide" id="practice-instructions-colorful">
 	<h1>Instructions for Practice Trial</h1>
 	<p>Remember, this is only for practice. Your results will be discarded.</p>
@@ -158,7 +153,7 @@ Do you have normal or corrected-to-normal vision (including normal color vision)
 	</div>
 </div>
 
-<!-- The "pre-info" slide - where the bulk of the experiment will be displayed. Again, note the use of <code>{{}}</code>. -->
+<!-- The "practice instructions" slide for the complexity experiment - This provides the instructions for completing the practice complexity task-->
 <div class="slide" id="practice-instructions-complexity">
 	<h1>Instructions for Practice Trial</h1>
 	<p>Remember, this is only for practice. Your results will be discarded.</p>
@@ -174,7 +169,7 @@ Do you have normal or corrected-to-normal vision (including normal color vision)
 	</div>
 </div>
 
-<!-- The "pre-info" slide - where the bulk of the experiment will be displayed. Again, note the use of <code>{{}}</code>. -->
+<!-- The "beginrealtrial" slide  -- This provides instructions for beginning the main trials after the practice is complete -->
 <div class="slide" id="beginrealtrial">
 	<h1>Great job!</h1>
 	<p>Now for the real deal. It'll be the same as the practice you just took, but with 30 websites.</p>
@@ -184,7 +179,7 @@ Do you have normal or corrected-to-normal vision (including normal color vision)
 	</div>
 </div>
 
-<!-- The "pre-info" slide - where the bulk of the experiment will be displayed. Again, note the use of <code>{{}}</code>. -->
+<!-- The "break" slide  -- This provides some text for the break between the two image trials -->
 <div class="slide" id="break">
 	<h1>You're Doing Great!</h1>
 	<p>Time for a break! You're half-way there!</p>
@@ -194,7 +189,7 @@ Do you have normal or corrected-to-normal vision (including normal color vision)
 	</div>
 </div>
 
-<!-- The "stage" slide - where the bulk of the experiment will be displayed. Again, note the use of <code>{{}}</code>. -->
+<!-- The "stage" slide - where images are shown for a fixed time to participants -->
 <div class="slide" id="stage">
 	 <div id="parttext" align = "center">
 	 <p style="display:inline">Part:</p>
@@ -212,6 +207,7 @@ Do you have normal or corrected-to-normal vision (including normal color vision)
 	</div>
 </div>
 
+<!-- The "evaluate" slide - where users provide Likert scale rankings for websites -->
 <div class="slide" id="evaluate">
 	<div id="parttexteval" align = "center">
 	 <p style="display:inline">Part:</p>
