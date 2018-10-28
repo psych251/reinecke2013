@@ -20,6 +20,19 @@ function showSlide(id) {
 	$("#"+id).show();
 }
 
+function beginTimeout(partNum, currentTrialNum, denom, currentImage) {
+  console.log(partNum, currentTrialNum, denom, currentImage)
+  showSlide("stage");
+  $("#partnum").text(partNum);
+  $("#number").text(currentTrialNum);
+  $("#denom").text(denom);
+  $("#stimulusimage").attr("src", currentImage);
+  var img = document.getElementById("stimulusimage")
+  img.addEventListener("load", function () {
+    setTimeout(experiment.evaluate, 500, currentTrialNum, partNum, denom);
+  });
+  }
+
 // clears likert scale between trials
 function clearLikert() {
   var ids = ["q1", "q2", "q3", "q4", "q5", "q6", "q7", "q8", "q9"]
@@ -144,7 +157,9 @@ var experiment = {
     // Show the finish slide.
     showSlide("finished");
     // Wait 1.5 seconds and then submit the whole experiment object to Mechanical Turk (mmturkey filters out the functions so we know we're just submitting properties [i.e. data])
-    setTimeout(function() { turk.submit(experiment) }, 1500);
+    setTimeout(function() { 
+    //turk.submit(experiment) 
+  }, 1500);
   },
   submitform: function(id) {
     masterData["imageOrder"] = imageOrder;
@@ -173,9 +188,12 @@ var experiment = {
       // var newData = {"userScore": userScore, "totalTrialNum": totalTrialNum,
       // "currentTrialNum": currentTrialNum, "imagePath": currentImage}
   }
-  console.log(masterData)
-  turk.submit(masterData)
-
+  
+  // setTimeout(function(){
+  //   console.log(masterData)
+  //   , 1000
+  // })
+  //turk.submit(masterData)
   },
   // updates evaluation data
   evaluate: function(trialNum, partNum, denom) {
@@ -192,8 +210,10 @@ var experiment = {
       $("#q1label").text("Very simple");
       $("#q9label").text("Very complex");
     }
-    clearLikert();
+    experiment.submitform();
+    clearLikert('likert');
   },
+  
   // The work horse of the sequence - what to do on every trial.
   next: function() {
     // If the number of remaining trials is 0, we're done, so call the end function.
@@ -216,7 +236,8 @@ var experiment = {
       showSlide("break");
       return;
     }
-    
+    //turk.submit(experiment) 
+  
     // Get the current trial - <code>shift()</code> removes the first element of the array and returns it.
     totalTrialNum = experiment.trials.shift();
     currentTrialNum = 65 - experiment.trials.length;
@@ -233,15 +254,9 @@ var experiment = {
     else { // practice trial
       denom = 5
     }
-    console.log("current trial num", currentTrialNum, experiment.trials.length)
+    //console.log("current trial num", currentTrialNum, experiment.trials.length)
     currentImage = imageOrder[totalTrialNum];
-    showSlide("stage");
-    $("#partnum").text(partNum);
-    $("#number").text(currentTrialNum);
-    $("#denom").text(denom);
-    $("#stimulusimage").attr("src", currentImage);
-
-    // show website image for 500ms
-    setTimeout(experiment.evaluate, 500, currentTrialNum, partNum, denom);
+    //console.log(currentImage)
+    beginTimeout(partNum, currentTrialNum, denom, currentImage);
   }
 }
