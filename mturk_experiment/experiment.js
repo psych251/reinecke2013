@@ -141,6 +141,7 @@ var experiment = {
   data: [],
   trials: trialNums,
   currentTrialNum: 0,
+  imageOrder: imageOrder,
   experimentType: whichExperiment,
   // determine which instructions to show to user
   decideSlide: function(){
@@ -158,7 +159,7 @@ var experiment = {
     showSlide("finished");
     // Wait 1.5 seconds and then submit the whole experiment object to Mechanical Turk (mmturkey filters out the functions so we know we're just submitting properties [i.e. data])
     setTimeout(function() { 
-    //turk.submit(experiment) 
+    turk.submit(experiment) 
   }, 1500);
   },
   submitform: function(id) {
@@ -167,26 +168,29 @@ var experiment = {
     if (id == "demo") {
       var formData = JSON.stringify($("#"+id).serializeArray());
       masterData["demographics"] = formData;
+      experiment.data.push({'demographics': formData})
     }
     else {
       var existingTrials = Object.keys(masterData)
       if (existingTrials.indexOf(totalTrialNum) < 0) {
         masterData[totalTrialNum] = {}
       }
-      var formData = $("#"+id).serializeArray()[0]
-      if (typeof formData == 'undefined') {
+      var buttonSelected = document.querySelector('input[name="likertopt"]:checked');
+      if (buttonSelected === null) {
         var userScore = null;
       }
       else {
-        var userScore = parseInt(formData["value"]);
+        var userScore = parseInt(buttonSelected.value);
       }
-      masterData[totalTrialNum]["userScore"] = userScore;
+      masterData[totalTrialNum]["score"] = userScore;
       masterData[totalTrialNum]["totalTrialNum"] = totalTrialNum;
       masterData[totalTrialNum]["currentTrialNum"] = currentTrialNum;
       masterData[totalTrialNum]["imagePath"] = currentImage;
 
-      // var newData = {"userScore": userScore, "totalTrialNum": totalTrialNum,
-      // "currentTrialNum": currentTrialNum, "imagePath": currentImage}
+      console.log(userScore)
+      var newData = {"score": userScore, "totalTrialNum": totalTrialNum,
+      "currentTrialNum": currentTrialNum, "imagePath": currentImage}
+      experiment.data.push(newData)
   }
   
   // setTimeout(function(){
@@ -210,7 +214,6 @@ var experiment = {
       $("#q1label").text("Very simple");
       $("#q9label").text("Very complex");
     }
-    experiment.submitform();
     clearLikert('likert');
   },
   
