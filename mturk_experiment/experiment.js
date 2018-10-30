@@ -109,26 +109,17 @@ function getImagePaths(category, numArr) {
 
 // Gets the correct distribution of images from different categories and randomizes their order
 function getImageForTrials() {
-    var englishImagesTrial1 = getImagePaths("english", getRandomIntegers(22, 350));
-    var foreignImagesTrial1 = getImagePaths("foreign", getRandomIntegers(4, 60));
-    var grayscaleImagesTrial1 = getImagePaths("grayscale", getRandomIntegers(4, 20));
-
-    var englishImagesTrial2 = getImagePaths("english", getRandomIntegers(22, 350));
-    var foreignImagesTrial2 = getImagePaths("foreign", getRandomIntegers(4, 60));
-    var grayscaleImagesTrial2 = getImagePaths("grayscale", getRandomIntegers(4, 20));
+    var englishImages = getImagePaths("english", getRandomIntegers(44, 350));
+    var foreignImages = getImagePaths("foreign", getRandomIntegers(8, 60));
+    var grayscaleImages = getImagePaths("grayscale", getRandomIntegers(8, 20));
 
     var practiceImages = getImagePaths("practice", [0, 1, 2, 3, 4]);
 
-    var imagesTrial1 = [].concat(englishImagesTrial1, foreignImagesTrial1, grayscaleImagesTrial1)
-    var imagesTrial2 = [].concat(englishImagesTrial2, foreignImagesTrial2, grayscaleImagesTrial2)
-
-    var imagesTrial1_copy = [].concat(imagesTrial1);
-    var imagesTrial2_copy = [].concat(imagesTrial2);
-    var imagesTrial1 = shuffle(imagesTrial1_copy);
-    var imagesTrial2 = shuffle(imagesTrial2_copy); // same images as trial 1 but in a new order
+    var imagesAllTrials = [].concat(englishImages, foreignImages, grayscaleImages)
+    var imagesAllTrials_copy = [].concat(imagesAllTrials);
+    var imagesAllTrials = shuffle(imagesAllTrials_copy);
     return {
-        "trial1": imagesTrial1,
-        "trial2": imagesTrial2,
+        "trials": imagesAllTrials,
         "practice": practiceImages
     }
 }
@@ -140,7 +131,7 @@ var trialNums = Array.apply(null, {
     length: 65
 }).map(Number.call, Number); // total number of images shown
 var randomImages = getImageForTrials()
-var imageOrder = (randomImages["practice"]).concat(randomImages["trial1"], randomImages["trial2"]); // list of image paths
+var imageOrder = (randomImages["practice"]).concat(randomImages["trials"]); // list of image paths
 var whichExperiment = "colorfulness"; // decide on colorfulness or complexity once
 
 // Show the instructions slide -- this is what we want subjects to see first.
@@ -216,7 +207,16 @@ var experiment = {
         $("#denomeval").css("display", "inline");
         clearLikert('likert');
     },
-
+    checkClicked: function() {
+        var buttonSelected = document.querySelector('input[name="likertopt"]:checked');
+        if (buttonSelected === null) {
+            alert("Please make a selection before clicking next");
+        }
+        else {
+          experiment.next();
+          experiment.submitform();
+        }
+    },
     // The work horse of the sequence - what to do on every trial.
     next: function() {
         // If the number of remaining trials is 0, we're done, so call the end function.
