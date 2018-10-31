@@ -94,7 +94,7 @@ Questions: <br>
 * How do I plot the regression? <br>
 </span>
 
-```{r results="hide"}
+```{r echo = TRUE}
 #note later switch to {r include = F}
 ####Load Relevant Libraries and Functions
 library(tidyverse)
