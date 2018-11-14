@@ -89,58 +89,99 @@ Next, we determine which data to exclude from the analyses based on the original
 
 For the primary analysis, developing a model to compare the image metrics to users' ratings of colorfulness, we prepare our data for running multiple linear regression with backward elimination. To do this we start with all of our low-level image features as the independent variables and colorfulness as the dependent variable. We iteratively remove image feature variables if they do not make statistically significant contributions to the model and update the model.
 
-<span style="color:red">
-Questions: <br>
-* How do I plot the regression? <br>
-</span>
-
 ```{r echo = TRUE}
 #note later switch to {r include = F}
 ####Load Relevant Libraries and Functions
 library(tidyverse)
 library(readr)
+require(ggplot2)
 ###Data Preparation
 #using author's data from a similar follow up study for now
-data_path = "all.csv" #update for collected data
+data_path = "../replication_data/Batch_213613_batch_out.csv" #update for collected data
 
 ####Import data
 d <- read_csv(data_path)
 d_dim <- dim(d)
 print(c("d dims: ", d_dim))
-
+head(d)
+```
+```{r}
 #### Data exclusion / filtering
-# filter CSV for websites with too few ratings
-filtered_data <- d %>% 
-  group_by(website) %>% 
-  filter(n() > 3)
+#get rid of workers who on average rated grayscale images as greater than 1.5
+grayscale_filtered_data <- d %>%
+  group_by(workerNum) %>%
+  mutate(gray_mean = mean(score[d$image_type == 'grayscale']) ) %>%
+  filter(gray_mean < 1.5)
 
+head(grayscale_filtered_data)
+dim(grayscale_filtered_data)
+
+#@TODO after having more data
+#filter CSV for websites with too few ratings
+# website_count_filtered_data <- grayscale_filtered_data %>%
+#   group_by(websiteName) %>%
+#   filter(n() > 3) #exclude websites without at least 3 ratings
+# 
+# print(c("the new dims after filtering are: ", dim(filtered_data)))
+
+website_count_filtered_data <- grayscale_filtered_data
+
+```
+```{r}
 #### Prepare data for analysis - create columns etc.
 #all column names for model
-myvars = c("mean_response", "black","silver","gray","white","maroon","red","purple","fuchsia","green","lime","olive","yellow","navy","blue","teal","aqua","hue","saturation","value","textArea","nonTextArea","numOfLeaves","percentageOfLeafArea","numOfTextGroup","numOfImageArea","colorfulness1","colorfulness2","colorHorizontalSymmetry","colorVerticalSymmetry","intensityHorizontalSymmetry","intensityVerticalSymmetry","intensityHorizontalBalance","intensityVerticalBalance","numOfQuadTreeLeaves_color","numOfQuadTreeLeaves_intensity","colorEquilibrium","intensityEquilibrium")
-data_for_lm = filtered_data[myvars]
+myvars = c("score", "black","silver","gray","white","maroon","red","purple","fuchsia","green","lime","olive","yellow","navy","blue","teal","aqua","hue","saturation","value","textArea","nonTextArea","numOfLeaves","percentageOfLeafArea","numOfTextGroup","numOfImageArea","colorfulness1","colorfulness2","colorHorizontalSymmetry","colorVerticalSymmetry","intensityHorizontalSymmetry","intensityVerticalSymmetry","intensityHorizontalBalance","intensityVerticalBalance","numOfQuadTreeLeaves_color","numOfQuadTreeLeaves_intensity","colorEquilibrium","intensityEquilibrium")
+data_for_lm = website_count_filtered_data[myvars]
 dlm_dim <- dim(data_for_lm)
 print(c("d for lm dims: ", dlm_dim))
-
+```
+```{r}
 #### Create model
 #get initial fit
-fit <- lm(mean_response ~ black+silver+gray+white+maroon+red+purple+fuchsia+green+lime+olive+yellow+navy+blue+teal+aqua+hue+saturation+value+textArea+nonTextArea+numOfLeaves+percentageOfLeafArea+numOfTextGroup+numOfImageArea+colorfulness1+colorfulness2+colorHorizontalSymmetry+colorVerticalSymmetry+intensityHorizontalSymmetry+intensityVerticalSymmetry+intensityHorizontalBalance+intensityVerticalBalance+numOfQuadTreeLeaves_color+numOfQuadTreeLeaves_intensity+colorEquilibrium+intensityEquilibrium, data=na.omit(data_for_lm))
+fit <- lm(score ~ black+silver+gray+white+maroon+red+purple+fuchsia+green+lime+olive+yellow+navy+blue+teal+aqua+hue+saturation+value+textArea+nonTextArea+numOfLeaves+percentageOfLeafArea+numOfTextGroup+numOfImageArea+colorfulness1+colorfulness2+colorHorizontalSymmetry+colorVerticalSymmetry+intensityHorizontalSymmetry+intensityVerticalSymmetry+intensityHorizontalBalance+intensityVerticalBalance+numOfQuadTreeLeaves_color+numOfQuadTreeLeaves_intensity+colorEquilibrium+intensityEquilibrium, data=na.omit(data_for_lm))
 
 #do backward elimination
 stepped_model <- step(fit, direction = "backward", trace=FALSE ) 
 
 #show model summary
 summary(stepped_model)
-
-#### plot data
 ```
 
+```{r}
+#### plot data
+ggplotRegression <- function (fit) {
+ggplot(fit$model, aes_string(x = names(fit$model)[2], y = names(fit$model)[1])) + 
+  geom_point() +
+  stat_smooth(method = "lm", col = "red") +
+  labs(title = paste("Adj R2 = ",signif(summary(fit)$adj.r.squared, 5),
+                     "Intercept =",signif(fit$coef[[1]],5 ),
+                     " Slope =",signif(fit$coef[[2]], 5),
+                     " P =",signif(summary(fit)$coef[2,4], 5)), x = "predicted colorfulness ratings", y = "observed colorfulness ratings")
+}
+
+#generate plot
+ggplotRegression(stepped_model) 
+```
+```{r}
+#comparison with original model
+significant_summary <- data.frame(summary(stepped_model)$coef[summary(stepped_model)$coef[,4] <= .05, 4])
+sig_factors <- c(row.names(significant_summary)[2:dim(significant_summary)[1]])
+original_sig_factors <- c("gray", "white", "maroon", "green", "lime", "blue", "teal", "saturation", "colorfulness2", "numOfImageArea", "numOfLeaves", "textArea", "nonTextArea")
+
+in_both_models <- c(intersect(original_sig_factors, sig_factors))
+only_in_original <- setdiff(original_sig_factors, in_both_models)
+only_in_replication <- setdiff(sig_factors, in_both_models)
+sig_models_union <- union(original_sig_factors, sig_factors)
+jaccard_index <- length(in_both_models)/length(sig_models_union) #union divided by intersection
+
+
+print(c("the image stats in both models are: ", in_both_models))
+print(c("the image stats in the original but not the replication are: ", only_in_original))
+print(c("the image stats in the replication but not the original are: ", only_in_replication))
+print(c("the jaccard index is: ", jaccard_index))
+```
 ### Confirmatory analysis
 The main contribution of the original paper's experiments that are the focus of this replication report are two models predicting users' ratings of a website's colorfulness and visual complexity from low-level image features of the website. To test the colorfulness model, which is the focus of this replication, we need to determine if we can produce a similar model in our experiment. To do this we use a multiple linear regression and use backwards elimination to eliminate not statistically significant image features. We then compare the models from this replication to the models the original authors provide. We then compare the set of computational image factors our replication model uses to the factors in the original model.
-
-<span style="color:red">
-Questions: <br>
-* Is there a more specific way I should discuss the comparison between our model and theirs?
-</span>
 
 ###Exploratory analyses
 
