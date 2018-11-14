@@ -100,10 +100,37 @@ function getImagePaths(category, numArr) {
     var imagePaths = [];
     var imagePath;
     console.log(category, numArr)
-    for (var i = 0; i < numArr.length; i++) {
-        imagePath = './website_stimuli/' + category + "/" + numArr[i].toString() + ".png"
-        imagePaths.push(imagePath)
+    if (Object.keys(excludedImages).indexOf(category) > -1) {
+        excluded_images_nums = excludedImages[category];
+        for (var i = 0; i < numArr.length; i++) {
+            if (excluded_images_nums.indexOf(i.toString()) > -1){
+                var new_index = randomInteger(350);
+                while (excluded_images_nums.indexOf(new_index.toString()) > -1 || numArr.indexOf(new_index) > -1) {
+                    if (category == "english"){
+                        new_index = randomInteger(350)
+                    }
+                    else if (category == "foreign") {
+                        new_index = randomInteger(60)
+                    }
+                }
+                imagePath = './website_stimuli/' + category + "/" + new_index.toString() + ".png"
+                imagePaths.push(imagePath)
+                
+            }
+            else{
+                imagePath = './website_stimuli/' + category + "/" + numArr[i].toString() + ".png"
+                imagePaths.push(imagePath)
+            }
+        }
     }
+    else{
+        console.log(category, numArr)
+        for (var i = 0; i < numArr.length; i++) {
+            imagePath = './website_stimuli/' + category + "/" + numArr[i].toString() + ".png"
+            imagePaths.push(imagePath)
+        }
+    }
+    console.log(imagePaths)
     return imagePaths
 }
 
@@ -131,8 +158,11 @@ var trialNums = Array.apply(null, {
     length: 65
 }).map(Number.call, Number); // total number of images shown
 var randomImages = getImageForTrials()
+console.log(randomImages)
 var imageOrder = (randomImages["practice"]).concat(randomImages["trials"]); // list of image paths
 var whichExperiment = "colorfulness"; // decide on colorfulness or complexity once
+
+
 
 // Show the instructions slide -- this is what we want subjects to see first.
 showSlide("instructions");
@@ -192,6 +222,7 @@ var experiment = {
                 "currentTrialNum": currentTrialNum,
                 "imagePath": currentImage
             }
+            console.log(newData)
             experiment.data.push(newData)
         }
         //turk.submit(masterData)
@@ -213,8 +244,9 @@ var experiment = {
             alert("Please make a selection before clicking next");
         }
         else {
-          experiment.next();
+          
           experiment.submitform();
+          experiment.next();
         }
     },
     // The work horse of the sequence - what to do on every trial.
@@ -258,7 +290,7 @@ var experiment = {
         }
         //console.log("current trial num", currentTrialNum, experiment.trials.length)
         currentImage = imageOrder[totalTrialNum];
-        //console.log(currentImage)
+        console.log(currentImage, totalTrialNum, currentTrialNum)
         beginTimeout(partNum, currentTrialNum, denom, currentImage);
     }
 }
