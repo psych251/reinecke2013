@@ -5,7 +5,11 @@ import sys
 import json
 import argparse
 
-#load the data file provided by the authors and extract the computational image statistics and excluded image
+"""
+Creates a csv with one row per observation that merges the image stats and worker data
+
+default usage: python postprocess.py
+"""
 
 WORKER_HEADERS = ["workerNum", "retake", "gender", "age", "country", "years", "residence", "education", "vision", "websiteName", "trialNum", "score", "image_type"]
 
@@ -13,6 +17,7 @@ WORKER_HEADERS = ["workerNum", "retake", "gender", "age", "country", "years", "r
 #TEST_WORKER_DATA = "./replication_data/Batch_213478_batch_results.csv"
 TEST_WORKER_DATA = "./replication_data/Batch_213613_batch_results.csv"
 IMAGE_STATS_DATA = "./replication_data/subset.csv"
+OUT_PATH = "./replication_data/out.csv"
 
 def write_csv(data, out_filepath):
     """utils function to write data to CSV file"""
@@ -137,19 +142,28 @@ def add_website_stats(demographic_and_score_data, image_stats_dict, image_stats_
 
 
 if __name__ == "__main__": 
+    parser = argparse.ArgumentParser(description='Specify in and out filepaths to convert CSV files')
+    parser.add_argument("-i", "--image_data", dest="image_data", type=str,
+                        help='give input image csv filepath', default=IMAGE_STATS_DATA)
+    parser.add_argument("-w", "--worker_data", dest="worker_data", type=str,
+                        help='give input worker csv filepath', default=TEST_WORKER_DATA)
+    parser.add_argument("-o", "--out_csv", dest="out_csv", type=str,
+                        help='give output csv filepath', default=OUT_PATH)
+    args = parser.parse_args()
+
     #merge the collected user data and the computational image stats
     #step 1: load the worker data
-    worker_data = load_worker_csv(TEST_WORKER_DATA)
+    worker_data = load_worker_csv(args.worker_data)
     #step 2: get the demographic data per worker
     demographic_data_per_worker = get_base_row_per_worker_website(worker_data)
     #step 3: merge the demographic data with the score per website
     merged_demographic_score_data = fill_worker_data_per_website(worker_data, demographic_data_per_worker)
     #step 4: load the computational image_stats
-    image_stats_dict, image_stats_headers = load_image_stats_csv(IMAGE_STATS_DATA)
+    image_stats_dict, image_stats_headers = load_image_stats_csv(args.image_data)
     #step 5: finally merge the stats and user data with one row per observation
     out_data = add_website_stats(merged_demographic_score_data, image_stats_dict, image_stats_headers)
     #step 6: write the combined data CSV file
-    write_csv(out_data, "out.csv")
+    write_csv(out_data, args.out_csv)
 
 
 

@@ -5,7 +5,11 @@ import sys
 import json
 import argparse
 
-#load the data file provided by the authors and extract the computational image statistics and excluded image
+"""
+Creates a JSON file for the excluded images and cleans the original authors' image stats data
+
+default usage: python preprocess.py
+"""
 
 STATS_HEADERS = ["website", "black", "silver", "gray", 
 "white", "maroon", "red", "purple", "fuchsia", "green", "lime", "olive",
@@ -17,7 +21,7 @@ STATS_HEADERS = ["website", "black", "silver", "gray",
 "numOfQuadTreeLeaves_color", "numOfQuadTreeLeaves_intensity", "colorEquilibrium", "intensityEquilibrium"]
 
 PROVIDED_CSV = "./original_data/all.csv"
-
+OUT_CSV = "./replication_data/subset.csv"
 STIMULI_ROOT_DIR = "./mturk_experiment/website_stimuli/"
 
 def write_csv(data, out_filepath):
@@ -89,13 +93,24 @@ def find_excluded_websites(subset_csv):
     return exclude_images
 
 if __name__ == "__main__": 
+    parser = argparse.ArgumentParser(description='Specify in and out filepaths to convert CSV files')
+    parser.add_argument("-i", "--in_csv", dest="in_csv", type=str,
+                        help='give input csv filepath', default=PROVIDED_CSV)
+    parser.add_argument("-o", "--out_csv", dest="out_csv", type=str,
+                        help='give output csv filepath', default=OUT_CSV)
+    parser.add_argument("-j", "--write_json", dest="write_json", type=bool,
+                        help='write json for excluded images', default=True)
+    args = parser.parse_args()
+
     #step 1 get the image stats from the original data:
-    selected_data = load_and_select_csv_data(PROVIDED_CSV)
-    write_csv(selected_data, "./replication_data/subset.csv")
+    selected_data = load_and_select_csv_data(args.in_csv)
+    write_csv(selected_data, args.out_csv)
     #step 2 identify which images were excluded in the original analysis:
-    excluded_image_data = find_excluded_websites("./replication_data/subset.csv")
+    excluded_image_data = find_excluded_websites(args.out_csv)
     write_csv(excluded_image_data, "./replication_data/excluded_images.csv")
-    excluded_json = write_json_for_excluded_images(excluded_image_data, "./mturk_experiment/excluded_images.json")
-    with open("./mturk_experiment/excludedImages.js", 'w') as file:
-        file.write("var excludedImages = "+str(excluded_json))
+    #step 3 write a json so the experiment doesn't select images the authors didn't use
+    if args.write_json:
+        excluded_json = write_json_for_excluded_images(excluded_image_data, "./mturk_experiment/excluded_images.json")
+        with open("./mturk_experiment/excludedImages.js", 'w') as file:
+            file.write("var excludedImages = "+str(excluded_json))
 
