@@ -107,11 +107,15 @@ head(d)
 ```
 ```{r}
 #### Data exclusion / filtering
-#get rid of workers who on average rated grayscale images as greater than 1.5
-grayscale_filtered_data <- d %>%
+#get rid of workers who on average rated grayscale images as greater than 1.5, have taken the test before, or don't meet the vision requirement
+grayscale_data <- d %>%
   group_by(workerNum) %>%
-  mutate(gray_mean = mean(score[d$image_type == 'grayscale']) ) %>%
-  filter(gray_mean < 1.5)
+  mutate(gray_mean = mean(score[d$image_type == 'grayscale'], na.rm=TRUE))
+
+
+grayscale_filtered_data <- grayscale_data %>%
+  group_by(workerNum) %>%
+  filter(gray_mean < 1.5, retake == 'No', vision == 'Yes')
 
 head(grayscale_filtered_data)
 dim(grayscale_filtered_data)
@@ -156,7 +160,7 @@ ggplot(fit$model, aes_string(x = names(fit$model)[2], y = names(fit$model)[1])) 
   labs(title = paste("Adj R2 = ",signif(summary(fit)$adj.r.squared, 5),
                      "Intercept =",signif(fit$coef[[1]],5 ),
                      " Slope =",signif(fit$coef[[2]], 5),
-                     " P =",signif(summary(fit)$coef[2,4], 5)), x = "predicted colorfulness ratings", y = "observed colorfulness ratings")
+                     " P =",signif(summary(fit)$coef[2,4], 5)), x = "predicted colorfulness ratings", y = "observed colorfulness ratings") + theme_bw() + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
 }
 
 #generate plot
@@ -179,6 +183,10 @@ print(c("the image stats in both models are: ", in_both_models))
 print(c("the image stats in the original but not the replication are: ", only_in_original))
 print(c("the image stats in the replication but not the original are: ", only_in_replication))
 print(c("the jaccard index is: ", jaccard_index))
+```
+
+```{r}
+afit <- aov(score ~ gender, data=na.omit(website_count_filtered_data))
 ```
 ### Confirmatory analysis
 The main contribution of the original paper's experiments that are the focus of this replication report are two models predicting users' ratings of a website's colorfulness and visual complexity from low-level image features of the website. To test the colorfulness model, which is the focus of this replication, we need to determine if we can produce a similar model in our experiment. To do this we use a multiple linear regression and use backwards elimination to eliminate not statistically significant image features. We then compare the models from this replication to the models the original authors provide. We then compare the set of computational image factors our replication model uses to the factors in the original model.
