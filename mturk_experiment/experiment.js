@@ -136,15 +136,21 @@ function getImagePaths(category, numArr) {
 
 // Gets the correct distribution of images from different categories and randomizes their order
 function getImageForTrials() {
-    var englishImages = getImagePaths("english", getRandomIntegers(44, 350));
-    var foreignImages = getImagePaths("foreign", getRandomIntegers(8, 60));
-    var grayscaleImages = getImagePaths("grayscale", getRandomIntegers(8, 20));
+    var englishImages = getImagePaths("english", getRandomIntegers(22, 350));
+    var foreignImages = getImagePaths("foreign", getRandomIntegers(4, 60));
+    var grayscaleImages = getImagePaths("grayscale", getRandomIntegers(4, 20));
 
     var practiceImages = getImagePaths("practice", [0, 1, 2, 3, 4]);
 
-    var imagesAllTrials = [].concat(englishImages, foreignImages, grayscaleImages)
-    var imagesAllTrials_copy = [].concat(imagesAllTrials);
-    var imagesAllTrials = shuffle(imagesAllTrials_copy);
+    var imagesOneTrial = [].concat(englishImages, foreignImages, grayscaleImages)
+    var imagesOneTrial_copy = [].concat(imagesOneTrial);
+    var imagesOneTrial = shuffle(imagesOneTrial_copy);
+
+    var imagesTwoTrial = [].concat(imagesOneTrial);
+    var imagesTwoTrial = shuffle(imagesTwoTrial);
+    
+    var imagesAllTrials = imagesOneTrial.concat(imagesTwoTrial);
+    console.log(imagesAllTrials)
     return {
         "trials": imagesAllTrials,
         "practice": practiceImages
