@@ -25,7 +25,7 @@ Link to paper: [link](https://github.com/mleake/reinecke2013/blob/master/origina
 ##Introduction
 In their original paper "Predicting Users' First Impressions of Website Aesthetics With a Quantification of Perceived Visual Complexity and Colorfulness" Reinecke et al. propose a computational model for predicting users' initial reactions to a website's appearance. This paper builds upon the existing literature that indicates that colorfulness and visual complexity are the two primary design features that contribute to website aesthetics. The authors propose models for predicting users' ratings of colorfulness and visual complexity based on automatically computed low-level image features. The focus of this replication is the colorfulness model.
 
-In this replication of the colorfulness experiment conducted by Reinecke et al. (2013), we aim to reproduce the methodology used in the original paper. First, we use the authors' provided code to compute the low-level image features of the website images, which the authors also have made publicly available. Then, we conduct an experiment on MTurk, asking users to rate the colorfulness of these images. From the data we develop computational models relating the low-level image statistics to users' ratings of colorfulness, as the original authors did.
+In this replication of the colorfulness experiment conducted by Reinecke et al. (2013), we aim to reproduce the methodology used in the original paper. First, we use the authors' provided low-level image features of the website images. These features include the basic HTML colors as well as measures of colorfulness and information density. Next, we conduct an experiment on MTurk, asking users to rate the colorfulness of these images. From the data we develop a computational model relating the low-level image statistics to users' ratings of colorfulness, as the original authors did.
 
 ##Methods
 
@@ -34,37 +34,40 @@ In this replication of the colorfulness experiment conducted by Reinecke et al. 
 ML: This section is not relevant to replicating the model. Is there another calculation I should include?
 </span>
 
-TEMPLATE TEXT: Original effect size, power analysis for samples to achieve 80%, 90%, 95% power to detect that effect size.  Considerations of feasibility for selecting planned sample size.
+For this particular analysis, power analysis is not appropriate. We use 100 participants and have each rate 30 images so that we have enough ratings for each of the 450 randomly selected website images.
 
 ###Planned Sample
 We use a similar sample to the participant sample selected in the original paper, described as:
-"Our final data consist of 184 participants (96 female) aged between 15 and 58 years (mean = 21.1) for the colorfulness experiment and 122 participants (60 female) between 16 and 70 years (mean = 32.3) for the complexity experiment." In our study we start with 100 participants.
+
+> "Our final data consist of 184 participants (96 female) aged between 15 and 58 years (mean = 21.1) for the colorfulness experiment and 122 participants (60 female) between 16 and 70 years (mean = 32.3) for the complexity experiment." In our study we start with 100 participants.
 
 We also follow the exclusion criteria specified in the original paper:
-"Participants were excluded from the analysis if they had previously participated in the same study and/or did not have normal or corrected-to-normal vision."
+
+> "Participants were excluded from the analysis if they had previously participated in the same study and/or did not have normal or corrected-to-normal vision."
 
 ###Materials
-We use the same materials as the original authors. This includes the 450 website images provided by the authors as well as the code for computing visual features, both of which are available [here](http://www.labinthewild.org/data/index.php).
+We use the same materials as the original authors. This includes the 450 website images provided by the authors as well as the computed visual features, both of which are available [here](http://www.labinthewild.org/data/index.php).
 
 ###Procedure	
 We follow a similar procedure to the one described in the original article as:
 
-"The experiments were implemented as 10-minute online tests
-on our own experimental platform LabintheWild.org and advertised in online communities and university newsletters. Both experiments followed the same pattern: Participants were asked to rate screenshots of websites that were shown for 500ms each (following the experiment procedure in [23]). The small exposure time avoids an in-depth engagement with the content of the sites, and instead captures participants’ initial reactions towards colorfulness and visual complexity. In the first evaluation phase, we presented each participant with a stratified random sample of 30 websites selected from the larger pool of 450 websites. The 22 English, 4 foreign (using a different script), and 4 grayscale websites were presented in random order. Participants rated every website on a 9-point Likert scale from “not at all complex” to “very complex” or “not at all colorful” to “very colorful”, depending on the experiment. After being encouraged to take a short break, we gave a second evaluation phase where participants re-rated the same 30 websites in a different random order so that we
-could measure consistency in their judgement. Before the
-two evaluation phases, we gave a short practice phase during
-which all participants were asked to evaluate a fixed set
-of five websites, given in randomized order. We also collected demographic information about each participant, such as gender, age, education level, and current country of residence, in order to control for these factors in the analysis."
-
-We make a few adjustments to this procedure. First, instead of asking users to re-rate the same websites during a second trial, we show them 30 new images in the second trial so each participant views 60 unique websites. We also run the study on MTurk as opposed to Lab in the Wild.
+> "The experiments were implemented as 10-minute online tests on our own experimental platform LabintheWild.org and advertised in online communities and university newsletters. Both experiments followed the same pattern: Participants were asked to rate screenshots of websites that were shown for 500ms each (following the experiment procedure in [23]). The small exposure time avoids an in-depth engagement with the content of the sites, and instead captures participants’ initial reactions towards colorfulness and visual complexity. In the first evaluation phase, we presented each participant with a stratified random sample of 30 websites selected from the larger pool of 450 websites. The 22 English, 4 foreign (using a different script), and 4 grayscale websites were presented in random order. Participants rated every website on a 9-point Likert scale from “not at all complex” to “very complex” or “not at all colorful” to “very colorful”, depending on the experiment. After being encouraged to take a short break, we gave a second evaluation phase where participants re-rated the same 30 websites in a different random order so that we could measure consistency in their judgement. Before the two evaluation phases, we gave a short practice phase during which all participants were asked to evaluate a fixed set of five websites, given in randomized order. We also collected demographic information about each participant, such as gender, age, education level, and current country of residence, in order to control for these factors in the analysis."
 
 ###Analysis Plan
-The goal of this analysis is to replicate the first set of experiments in Reinecke et. al, 2013. For all analyses we follow the the first of the data exclusion criteria the original authors describe: "We additionally excluded websites that had received three or fewer ratings (due to the random assignment to participants), or where the standard error of their mean complexity was ≥ 0.75." We do not follow the second guideline for data exclusion because this replication does not collect data on mean complexity.
+The goal of this analysis is to replicate the first set of experiments in Reinecke et. al, 2013. For all analyses we follow the the first of the data exclusion criteria the original authors describe: 
 
-The primary analysis to perform is computing the prediction model for perceived colorfulness. For this analysis we use multiple linear regression with backward elimination. The model begins the authors' original set of image statistics, and then different variables are removed according to the process described in the original paper: "In this method, all predictors are initially added to the model, and iteratively removed if they do not make a statistically significant contribution to how well the model predicts the outcome variable (the ratings, in our case). At each step, the remaining predictors are reassessed in terms of their contribution to the newly calculated model." The goal of these analyses is to replicate the paper's models for predicting users' ratings of colorfulness based on specific low-level image features generated computationally.
+> "We additionally excluded websites that had received three or fewer ratings (due to the random assignment to participants), or where the standard error of their mean complexity was ≥ 0.75." 
+
+We do not follow the second guideline for data exclusion because this replication does not collect data on mean complexity.
+
+The primary analysis to perform is computing the prediction model for perceived colorfulness. For this analysis we use multiple linear regression with backward elimination. The model begins the authors' original set of image statistics, and then different variables are removed according to the process described in the original paper: 
+
+>"In this method, all predictors are initially added to the model, and iteratively removed if they do not make a statistically significant contribution to how well the model predicts the outcome variable (the ratings, in our case). At each step, the remaining predictors are reassessed in terms of their contribution to the newly calculated model." 
+
+The goal of these analyses is to replicate the paper's models for predicting users' ratings of colorfulness based on specific low-level image features generated computationally.
 
 ###Differences from Original Study
-All experiments were run on MTurk as opposed to Lab in the Wild, which has an unpaid citizen science reward model. Characterizing participants on Lab in the Wild is an area of ongoing research. So far researchers have found that participants come from almost every country in the world and users are motivated to participate because they get to see how their results compare to others (Reinecke & Gajos, 2015). We do not anticipate that the difference in experiment platform will influence the results in this study. The original study participants were as young as 15, but in this replication the minimum age is set at 18, as required by MTurk. One step in the authors' original experiments is determining if users' demographic backgrounds influence their judgment of website colorfulness and visual complexity. The original finding is that these demographic variables do not influence these specific aesthetic judgments. We also do not show each user the same websites a second time due to budget constraints. We do not anticipate this will affect our results. In the original study the authors find users are relatively consistent in their ratings across the two trials (SD = 0.55 for a 9-point Likert scale).
+All experiments were run on MTurk as opposed to Lab in the Wild, which has an unpaid citizen science reward model. Characterizing participants on Lab in the Wild is an area of ongoing research. So far researchers have found that participants come from almost every country in the world and users are motivated to participate because they get to see how their results compare to others (Reinecke & Gajos, 2015). We do not anticipate that the difference in experiment platform will influence the results in this study. The original study participants were as young as 15, but in this replication the minimum age is set at 18, as required by MTurk. One step in the authors' original experiments is determining if users' demographic backgrounds influence their judgment of website colorfulness and visual complexity. The original finding is that these demographic variables do not influence these specific aesthetic judgments.
 
 ### Methods Addendum (Post Data Collection)
 
@@ -83,11 +86,11 @@ You can comment this section out prior to final report with data collection.
 ### Data preparation
 We collect data for both the computational image statistics as well as users' ratings of website image colorfulness. First, we begin with the authors' computed image statstics. Each of these different image measurements is treated as a single variable in our regression. For each user we collect their age, country of residence, native language, highest level of education, and if they have normal or corrected-to-normal vision. We exclude all data from participants without normal or corrected-to-normal vision.
 
-For all of the analyses, the data are organized in tidy format with the columns of the data corresponding to ParticipantID, WebsiteID, TrialID, and ColorfulnessRating. Each row is a different observation for user data (i.e., each participant, website, and trial matching). We merge the user data with the computational image metrics by adding columns to the data for each of the computational image metrics (16 HTML colors and 21 additional derived metrics).
+For all of the analyses, the data are organized with each row is a different observation for user data (i.e., each participant, website, and trial matching). We merge the user data with the computational image metrics by adding columns to the data for each of the computational image metrics (16 HTML colors and 21 additional derived metrics).
 
 Next, we determine which data to exclude from the analyses based on the original study's exclusion criteria. First, we compute which websites had three or fewer ratings and eliminate this data.
 
-For the primary analysis, developing a model to compare the image metrics to users' ratings of colorfulness, we prepare our data for running multiple linear regression with backward elimination. To do this we start with all of our low-level image features as the independent variables and colorfulness as the dependent variable. We iteratively remove image feature variables if they do not make statistically significant contributions to the model and update the model.
+For the primary analysis: developing a model to compare the image metrics to users' ratings of colorfulness, we prepare our data for running multiple linear regression with backward elimination. To do this we start with all of our low-level image features as the independent variables and the participants' mean colorfulness scores as the dependent variable. We iteratively remove image feature variables if they do not make statistically significant contributions to the model and update the model.
 
 ```{r echo = TRUE}
 #note later switch to {r include = F}
@@ -97,7 +100,7 @@ library(readr)
 require(ggplot2)
 ###Data Preparation
 #using author's data from a similar follow up study for now
-data_path = "../replication_data/Batch_213613_batch_out.csv" #update for collected data
+data_path = "../replication_data/test_out.csv" #update for collected data
 
 ####Import data
 d <- read_csv(data_path)
@@ -107,42 +110,44 @@ head(d)
 ```
 ```{r}
 #### Data exclusion / filtering
-#get rid of workers who on average rated grayscale images as greater than 1.5, have taken the test before, or don't meet the vision requirement
-grayscale_data <- d %>%
+#get rid of workers who have taken the test before or don't meet the vision requirement and all grayscale and practice images
+filtered_data <- d %>%
   group_by(workerNum) %>%
-  mutate(gray_mean = mean(score[d$image_type == 'grayscale'], na.rm=TRUE))
+  filter(retake == 'No', vision == 'Yes', image_type != "grayscale", image_type != "practice")
 
+head(filtered_data)
+dim(filtered_data)
 
-grayscale_filtered_data <- grayscale_data %>%
-  group_by(workerNum) %>%
-  filter(gray_mean < 1.5, retake == 'No', vision == 'Yes')
-
-head(grayscale_filtered_data)
-dim(grayscale_filtered_data)
-
-#@TODO after having more data
+# Uncomment after having more data
 #filter CSV for websites with too few ratings
-# website_count_filtered_data <- grayscale_filtered_data %>%
+# website_count_filtered_data <- filtered_data %>%
 #   group_by(websiteName) %>%
-#   filter(n() > 3) #exclude websites without at least 3 ratings
+#   filter(n() > 4) #exclude websites without at least 4 ratings
 # 
 # print(c("the new dims after filtering are: ", dim(filtered_data)))
 
-website_count_filtered_data <- grayscale_filtered_data
+website_count_filtered_data <- filtered_data
 
 ```
 ```{r}
 #### Prepare data for analysis - create columns etc.
+#add a column for mean score
+mean_score_data <- website_count_filtered_data %>%
+  group_by(websiteName) %>%
+  mutate(meanScore = mean(c(score,score2), na.rm = TRUE))
+
 #all column names for model
-myvars = c("score", "black","silver","gray","white","maroon","red","purple","fuchsia","green","lime","olive","yellow","navy","blue","teal","aqua","hue","saturation","value","textArea","nonTextArea","numOfLeaves","percentageOfLeafArea","numOfTextGroup","numOfImageArea","colorfulness1","colorfulness2","colorHorizontalSymmetry","colorVerticalSymmetry","intensityHorizontalSymmetry","intensityVerticalSymmetry","intensityHorizontalBalance","intensityVerticalBalance","numOfQuadTreeLeaves_color","numOfQuadTreeLeaves_intensity","colorEquilibrium","intensityEquilibrium")
-data_for_lm = website_count_filtered_data[myvars]
+myvars = c("meanScore", "black","silver","gray","white","maroon","red","purple","fuchsia","green","lime","olive","yellow","navy","blue","teal","aqua","hue","saturation","value","textArea","nonTextArea","numOfLeaves","percentageOfLeafArea","numOfTextGroup","numOfImageArea","colorfulness1","colorfulness2","colorHorizontalSymmetry","colorVerticalSymmetry","intensityHorizontalSymmetry","intensityVerticalSymmetry","intensityHorizontalBalance","intensityVerticalBalance","numOfQuadTreeLeaves_color","numOfQuadTreeLeaves_intensity","colorEquilibrium","intensityEquilibrium")
+data_for_lm = mean_score_data[myvars]
+
 dlm_dim <- dim(data_for_lm)
 print(c("d for lm dims: ", dlm_dim))
+data_for_lm
 ```
 ```{r}
 #### Create model
 #get initial fit
-fit <- lm(score ~ black+silver+gray+white+maroon+red+purple+fuchsia+green+lime+olive+yellow+navy+blue+teal+aqua+hue+saturation+value+textArea+nonTextArea+numOfLeaves+percentageOfLeafArea+numOfTextGroup+numOfImageArea+colorfulness1+colorfulness2+colorHorizontalSymmetry+colorVerticalSymmetry+intensityHorizontalSymmetry+intensityVerticalSymmetry+intensityHorizontalBalance+intensityVerticalBalance+numOfQuadTreeLeaves_color+numOfQuadTreeLeaves_intensity+colorEquilibrium+intensityEquilibrium, data=na.omit(data_for_lm))
+fit <- lm(meanScore ~ black+silver+gray+white+maroon+red+purple+fuchsia+green+lime+olive+yellow+navy+blue+teal+aqua+hue+saturation+value+textArea+nonTextArea+numOfLeaves+percentageOfLeafArea+numOfTextGroup+numOfImageArea+colorfulness1+colorfulness2+colorHorizontalSymmetry+colorVerticalSymmetry+intensityHorizontalSymmetry+intensityVerticalSymmetry+intensityHorizontalBalance+intensityVerticalBalance+numOfQuadTreeLeaves_color+numOfQuadTreeLeaves_intensity+colorEquilibrium+intensityEquilibrium, data=na.omit(data_for_lm))
 
 #do backward elimination
 stepped_model <- step(fit, direction = "backward", trace=FALSE ) 
@@ -166,6 +171,15 @@ ggplot(fit$model, aes_string(x = names(fit$model)[2], y = names(fit$model)[1])) 
 #generate plot
 ggplotRegression(stepped_model) 
 ```
+
+### Confirmatory analysis
+The main contribution of the original paper's experiments that are the focus of this replication report is the model predicting users' ratings of a website's colorfulness from low-level image features of the website. We replicate this original model using our collected user colorfulness scores and the provided image statistics. We use multiple linear regression with backward elimination to eliminate not statistically significant image features and build our final model.
+
+###Exploratory analyses
+After building our model, our goal is to compare the model from this replication to the model the original authors provide. To do this we compare the sets of statistically significant image features in the two models and compute the Jaccard index. 
+
+Although the authors did not report feature correlations, we also examine the feature correlations to help build intuition about about why different image features were included in the final model. 
+
 ```{r}
 #comparison with original model
 significant_summary <- data.frame(summary(stepped_model)$coef[summary(stepped_model)$coef[,4] <= .05, 4])
@@ -180,20 +194,14 @@ jaccard_index <- length(in_both_models)/length(sig_models_union) #union divided 
 
 
 print(c("the image stats in both models are: ", in_both_models))
-print(c("the image stats in the original but not the replication are: ", only_in_original))
-print(c("the image stats in the replication but not the original are: ", only_in_replication))
+#print(c("the image stats in the original but not the replication are: ", only_in_original))
+#print(c("the image stats in the replication but not the original are: ", only_in_replication))
 print(c("the jaccard index is: ", jaccard_index))
+
+
+#show model summary with feature correlations
+summary(stepped_model, correlation = TRUE)
 ```
-
-```{r}
-afit <- aov(score ~ gender, data=na.omit(website_count_filtered_data))
-```
-### Confirmatory analysis
-The main contribution of the original paper's experiments that are the focus of this replication report are two models predicting users' ratings of a website's colorfulness and visual complexity from low-level image features of the website. To test the colorfulness model, which is the focus of this replication, we need to determine if we can produce a similar model in our experiment. To do this we use a multiple linear regression and use backwards elimination to eliminate not statistically significant image features. We then compare the models from this replication to the models the original authors provide. We then compare the set of computational image factors our replication model uses to the factors in the original model.
-
-###Exploratory analyses
-
-Any follow-up analyses desired (not required).  
 
 ## Discussion
 

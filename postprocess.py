@@ -11,13 +11,14 @@ Creates a csv with one row per observation that merges the image stats and worke
 default usage: python postprocess.py
 """
 
-WORKER_HEADERS = ["workerNum", "retake", "gender", "age", "country", "years", "residence", "education", "vision", "websiteName", "trialNum", "score", "image_type"]
+WORKER_HEADERS = ["workerNum", "retake", "gender", "age", "country", "years", "residence", "education", "vision", "websiteName", "trialNum", "image_type", "score", "score2"]
 
 #TEST_WORKER_DATA = "./replication_data/Batch_213376_batch_results.csv"
 #TEST_WORKER_DATA = "./replication_data/Batch_213478_batch_results.csv"
-TEST_WORKER_DATA = "./replication_data/Batch_213613_batch_results.csv"
+#TEST_WORKER_DATA = "./replication_data/Batch_213613_batch_results.csv"
+TEST_WORKER_DATA = "./replication_data/Batch_214076_batch_results.csv"
 IMAGE_STATS_DATA = "./replication_data/subset.csv"
-OUT_PATH = "./replication_data/out.csv"
+OUT_PATH = "./replication_data/Batch_214076_batch_out.csv"
 
 def write_csv(data, out_filepath):
     """utils function to write data to CSV file"""
@@ -110,18 +111,24 @@ def fill_worker_data_per_website(worker_data, base_rows):
     out_data = [WORKER_HEADERS]
     for idx, worker in enumerate(worker_data): #loop through each worker's data array
         json_data = json.loads(worker_data[idx])["data"]
+        seen_websites = {}
         for i, d in enumerate(json_data):
             if "demographics" not in d.keys():
                 new_row = range(13)
                 new_row[0:9] = base_rows[idx][0:9]
                 if u'score' in d.keys():
                     image_name = update_image_name(d[u'imagePath'])
-                    new_row[9] = image_name
-                    new_row[10] = d[u'currentTrialNum']
-                    new_row[11] = d[u'score']
-                    new_row[12] = get_image_name(image_name)
-                    out_data.append(new_row)
+                    if image_name in seen_websites.keys(): #map website name to row num
+                        out_data[seen_websites[image_name]].append(d[u'score'])
+                    else:
+                        new_row[9] = image_name
+                        new_row[10] = d[u'currentTrialNum']
+                        new_row[11] = get_image_name(image_name)
+                        new_row[12] = d[u'score']
+                        seen_websites[image_name] = len(out_data)
+                        out_data.append(new_row)
                
+    print seen_websites
     print out_data
     print len(out_data)
     return out_data
