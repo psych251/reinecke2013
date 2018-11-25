@@ -50,7 +50,7 @@ def write_json_for_excluded_images(excluded_images_list, out_json_path):
 
 def load_and_select_csv_data(in_csv):
     """takes the author provided data set and creates a new 2-d array:
-    - each row is a webs"./original_data/all.csv"ite
+    - each row is a website
     - each column is a different image stat
     """
     with open(in_csv, 'rb') as csvfile:
