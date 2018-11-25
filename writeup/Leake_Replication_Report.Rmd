@@ -69,15 +69,15 @@ The goal of these analyses is to replicate the paper's models for predicting use
 ###Differences from Original Study
 All experiments were run on MTurk as opposed to Lab in the Wild, which has an unpaid citizen science reward model. Characterizing participants on Lab in the Wild is an area of ongoing research. So far researchers have found that participants come from almost every country in the world and users are motivated to participate because they get to see how their results compare to others (Reinecke & Gajos, 2015). We do not anticipate that the difference in experiment platform will influence the results in this study. The original study participants were as young as 15, but in this replication the minimum age is set at 18, as required by MTurk. One step in the authors' original experiments is determining if users' demographic backgrounds influence their judgment of website colorfulness and visual complexity. The original finding is that these demographic variables do not influence these specific aesthetic judgments.
 
-### Methods Addendum (Post Data Collection)
+<!-- ### Methods Addendum (Post Data Collection) -->
 
-You can comment this section out prior to final report with data collection.
+<!-- You can comment this section out prior to final report with data collection. -->
 
-#### Actual Sample
-  Sample size, demographics, data exclusions based on rules spelled out in analysis plan
+<!-- #### Actual Sample -->
+<!--   Sample size, demographics, data exclusions based on rules spelled out in analysis plan -->
 
-#### Differences from pre-data collection methods plan
-  Any differences from what was described as the original plan, or “none”.
+<!-- #### Differences from pre-data collection methods plan -->
+<!--   Any differences from what was described as the original plan, or “none”. -->
 
 
 ##Results
@@ -92,6 +92,7 @@ Next, we determine which data to exclude from the analyses based on the original
 
 For the primary analysis: developing a model to compare the image metrics to users' ratings of colorfulness, we prepare our data for running multiple linear regression with backward elimination. To do this we start with all of our low-level image features as the independent variables and the participants' mean colorfulness scores as the dependent variable. We iteratively remove image feature variables if they do not make statistically significant contributions to the model and update the model.
 
+
 ```{r echo = TRUE}
 #note later switch to {r include = F}
 ####Load Relevant Libraries and Functions
@@ -99,8 +100,8 @@ library(tidyverse)
 library(readr)
 require(ggplot2)
 ###Data Preparation
-#using author's data from a similar follow up study for now
-data_path = "../replication_data/test_out.csv" #update for collected data
+#TODO: update for final collected data
+data_path = "../replication_data/pilotB_out.csv" 
 
 ####Import data
 d <- read_csv(data_path)
@@ -118,8 +119,8 @@ filtered_data <- d %>%
 head(filtered_data)
 dim(filtered_data)
 
-# Uncomment after having more data
-#filter CSV for websites with too few ratings
+# TODO: Uncomment after having more data
+# filter CSV for websites with too few ratings
 # website_count_filtered_data <- filtered_data %>%
 #   group_by(websiteName) %>%
 #   filter(n() > 4) #exclude websites without at least 4 ratings
@@ -142,8 +143,11 @@ data_for_lm = mean_score_data[myvars]
 
 dlm_dim <- dim(data_for_lm)
 print(c("d for lm dims: ", dlm_dim))
-data_for_lm
 ```
+
+### Confirmatory analysis
+The main contribution of the original paper's experiments that are the focus of this replication report is the model predicting users' ratings of a website's colorfulness from low-level image features of the website. We replicate this original model using our collected user colorfulness scores and the provided image statistics. We use multiple linear regression with backward elimination to eliminate not statistically significant image features and build our final model.
+
 ```{r}
 #### Create model
 #get initial fit
@@ -172,8 +176,6 @@ ggplot(fit$model, aes_string(x = names(fit$model)[2], y = names(fit$model)[1])) 
 ggplotRegression(stepped_model) 
 ```
 
-### Confirmatory analysis
-The main contribution of the original paper's experiments that are the focus of this replication report is the model predicting users' ratings of a website's colorfulness from low-level image features of the website. We replicate this original model using our collected user colorfulness scores and the provided image statistics. We use multiple linear regression with backward elimination to eliminate not statistically significant image features and build our final model.
 
 ###Exploratory analyses
 After building our model, our goal is to compare the model from this replication to the model the original authors provide. To do this we compare the sets of statistically significant image features in the two models and compute the Jaccard index. 
