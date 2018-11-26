@@ -30,10 +30,6 @@ In this replication of the colorfulness experiment conducted by Reinecke et al. 
 ##Methods
 
 ###Power Analysis
-<span style="color:red">
-ML: This section is not relevant to replicating the model. Is there another calculation I should include?
-</span>
-
 For this particular analysis, power analysis is not appropriate. We use 100 participants and have each rate 30 images so that we have enough ratings for each of the 450 randomly selected website images.
 
 ###Planned Sample
@@ -113,7 +109,6 @@ head(d)
 #### Data exclusion / filtering
 #get rid of workers who have taken the test before or don't meet the vision requirement and all grayscale and practice images
 filtered_data <- d %>%
-  group_by(workerNum) %>%
   filter(retake == 'No', vision == 'Yes', image_type != "grayscale", image_type != "practice")
 
 head(filtered_data)
