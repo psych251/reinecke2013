@@ -12,6 +12,14 @@
 
 // ## Helper functions
 
+var preloadedImages = new Array()
+function preload(imageUrlArray) {
+    for (i = 0; i < imageUrlArray.length; i++) {
+        preloadedImages[i] = new Image()
+        preloadedImages[i].src = imageUrlArray[i]
+    }
+}
+
 // Shows slides. We're using jQuery here - the **$** is the jQuery selector function, which takes as input either a DOM element or a CSS selector string.
 function showSlide(id) {
     // Hide all slides
@@ -151,6 +159,8 @@ function getImageForTrials() {
     
     var imagesAllTrials = imagesOneTrial.concat(imagesTwoTrial);
     console.log(imagesAllTrials)
+    preload(practiceImages)
+    preload(imagesAllTrials)
     return {
         "trials": imagesAllTrials,
         "practice": practiceImages
