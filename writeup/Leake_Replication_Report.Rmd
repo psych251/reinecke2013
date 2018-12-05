@@ -65,15 +65,99 @@ The goal of these analyses is to replicate the paper's models for predicting use
 ###Differences from Original Study
 All experiments were run on MTurk as opposed to Lab in the Wild, which has an unpaid citizen science reward model. Characterizing participants on Lab in the Wild is an area of ongoing research. So far researchers have found that participants come from almost every country in the world and users are motivated to participate because they get to see how their results compare to others (Reinecke & Gajos, 2015). We do not anticipate that the difference in experiment platform will influence the results in this study. The original study participants were as young as 15, but in this replication the minimum age is set at 18, as required by MTurk. One step in the authors' original experiments is determining if users' demographic backgrounds influence their judgment of website colorfulness and visual complexity. The original finding is that these demographic variables do not influence these specific aesthetic judgments.
 
-<!-- ### Methods Addendum (Post Data Collection) -->
 
-<!-- You can comment this section out prior to final report with data collection. -->
 
-<!-- #### Actual Sample -->
-<!--   Sample size, demographics, data exclusions based on rules spelled out in analysis plan -->
+```{r echo = TRUE}
+#note later switch to {r include = F}
+####Load Relevant Libraries and Functions
+library(tidyverse)
+library(readr)
+require(ggplot2)
+library(dplyr)
 
-<!-- #### Differences from pre-data collection methods plan -->
-<!--   Any differences from what was described as the original plan, or “none”. -->
+###Data Preparation
+data_path = "../replication_data/finalDataCollection_out.csv" 
+
+####Import data
+d <- read_csv(data_path)
+d_dim <- dim(d)
+print(c("d dims: ", d_dim))
+head(d)
+```
+```{r}
+#### Data exclusion / filtering
+# get the number of participants
+num_workers_start <- length(unique(d$workerNum)) #before filtering
+num_retake <- length(unique(d$workerNum[which(d$retake == 'Yes')])) #number who checked retake
+num_vision_no <- length(unique(d$workerNum[which(d$vision == 'No')])) #number who failed vision check
+
+print(c("started with ", num_workers_start, " participants"), quote = F)
+print(c(num_retake, " indicated retake"), quote = F)
+print(c(num_vision_no, " participants did not pass the vision test"), quote = F)
+
+#get rid of workers who have taken the test before or don't meet the vision requirement and all grayscale and practice images
+filtered_data <- d %>%
+  filter(retake == 'No', vision == 'Yes', image_type != "grayscale", image_type != "practice")
+
+#get the number of workers after filtering
+num_workers_end <- length(unique(filtered_data$workerNum))
+print(c("ended with ", num_workers_end, " participants"), quote = F)
+
+# filter CSV for websites with too few ratings
+website_count_filtered_data <- filtered_data %>%
+  group_by(websiteName) %>%
+  filter(n() >= 4) #exclude websites without at least 4 ratings
+
+print(c("the new dims after filtering are: ", dim(website_count_filtered_data)))
+
+num_before_websites <- length(unique(d$websiteName)) #number of websites at start
+num_remove_grayscale_practice <- length(unique(filtered_data$websiteName)) #number of websites filtered for grayscale or practice
+num_final_websites <- length(unique(website_count_filtered_data$websiteName)) #number of websites after filtering for count
+print(c("started with ", num_before_websites, " website images"), quote = F)
+print(c("got ", num_remove_grayscale_practice, " website images with grayscale and practice filter"), quote = F)
+print(c("got ", num_final_websites, " website images after count filter"), quote = F)
+```
+
+```{r}
+#demographic data
+
+age_data <- filtered_data %>%
+  group_by(workerNum) %>%
+  summarize(agePerWorker = age[1]) %>%
+  summarize(meanAge = mean(agePerWorker, na.rm = T), minAge = min(agePerWorker, na.rm = T), maxAge = max(agePerWorker, na.rm = T))
+  
+age_data
+#look at gender of participants
+print(c("mean age: ", age_data$meanAge), quote = F)
+print(c("min age: ", age_data$minAge), quote = F)
+print(c("max age: ", age_data$maxAge), quote = F)
+
+gender_data <- filtered_data %>%
+  group_by(workerNum) %>%
+  distinct(workerNum, .keep_all = T) %>%
+  mutate(isWoman = ifelse(gender == "Female", TRUE, FALSE), isMan = ifelse(gender == "Male", TRUE, FALSE), isOther = ifelse(!(gender == "Female" | gender == "Male"), TRUE, FALSE))
+
+numWomen = sum(gender_data$isWoman)
+numMen = sum(gender_data$isMan)
+numOther = sum(gender_data$isOther)
+
+#look at gender of participants
+print(c("number of women: ", numWomen), quote = F)
+print(c("number of men: ", numMen), quote = F)
+print(c("number of other: ", numOther), quote = F)
+```
+
+### Methods Addendum (Post Data Collection)
+
+#### Actual Sample
+#Sample size, demographics, data exclusions based on rules spelled out in analysis plan
+We started with 100 workers recruited on MTurk. `r num_vision_no` participants did not meet the vision criteria of normal or corrected-to-normal vision and color vision. `r num_retake` participants indicated they were retaking the test so their responses were excluded. Our final participant sample had `r num_workers_end` participants.
+
+The original study authors provided 450 images. They excluded 15 images based on additional exclusion criteria for their subsequent models, so for our replication we started with these 435 website images from the original authors. In our analysis we excluded the practice and grayscale images as well as any images without at least 4 ratings. After this filtering stage, we were left with `r num_final_websites` website images to use in our analysis.
+
+
+#### Differences from pre-data collection methods plan
+  Any differences from what was described as the original plan, or “none”.
 
 
 ##Results
@@ -89,55 +173,26 @@ Next, we determine which data to exclude from the analyses based on the original
 For the primary analysis: developing a model to compare the image metrics to users' ratings of colorfulness, we prepare our data for running multiple linear regression with backward elimination. To do this we start with all of our low-level image features as the independent variables and the participants' mean colorfulness scores as the dependent variable. We iteratively remove image feature variables if they do not make statistically significant contributions to the model and update the model.
 
 
-```{r echo = TRUE}
-#note later switch to {r include = F}
-####Load Relevant Libraries and Functions
-library(tidyverse)
-library(readr)
-require(ggplot2)
-###Data Preparation
-#TODO: update for final collected data
-data_path = "../replication_data/pilotB_out.csv" 
-
-####Import data
-d <- read_csv(data_path)
-d_dim <- dim(d)
-print(c("d dims: ", d_dim))
-head(d)
-```
-```{r}
-#### Data exclusion / filtering
-#get rid of workers who have taken the test before or don't meet the vision requirement and all grayscale and practice images
-filtered_data <- d %>%
-  filter(retake == 'No', vision == 'Yes', image_type != "grayscale", image_type != "practice")
-
-head(filtered_data)
-dim(filtered_data)
-
-# TODO: Uncomment after having more data
-# filter CSV for websites with too few ratings
-# website_count_filtered_data <- filtered_data %>%
-#   group_by(websiteName) %>%
-#   filter(n() > 4) #exclude websites without at least 4 ratings
-# 
-# print(c("the new dims after filtering are: ", dim(filtered_data)))
-
-website_count_filtered_data <- filtered_data
-
-```
 ```{r}
 #### Prepare data for analysis - create columns etc.
 #add a column for mean score
 mean_score_data <- website_count_filtered_data %>%
-  group_by(websiteName) %>%
-  mutate(meanScore = mean(c(score,score2), na.rm = TRUE))
+  mutate(meanScore = (score + score2)/2.0) %>% #add the mean for each trial
+  group_by(websiteName) %>% #group data by website name
+  mutate(meanScore = mean(meanScore))
+
 
 #all column names for model
-myvars = c("meanScore", "black","silver","gray","white","maroon","red","purple","fuchsia","green","lime","olive","yellow","navy","blue","teal","aqua","hue","saturation","value","textArea","nonTextArea","numOfLeaves","percentageOfLeafArea","numOfTextGroup","numOfImageArea","colorfulness1","colorfulness2","colorHorizontalSymmetry","colorVerticalSymmetry","intensityHorizontalSymmetry","intensityVerticalSymmetry","intensityHorizontalBalance","intensityVerticalBalance","numOfQuadTreeLeaves_color","numOfQuadTreeLeaves_intensity","colorEquilibrium","intensityEquilibrium")
+myvars = c("websiteName", "meanScore", "black","silver","gray","white","maroon","red","purple","fuchsia","green","lime","olive","yellow","navy","blue","teal","aqua","hue","saturation","value","textArea","nonTextArea","numOfLeaves","percentageOfLeafArea","numOfTextGroup","numOfImageArea","colorfulness1","colorfulness2","colorHorizontalSymmetry","colorVerticalSymmetry","intensityHorizontalSymmetry","intensityVerticalSymmetry","intensityHorizontalBalance","intensityVerticalBalance","numOfQuadTreeLeaves_color","numOfQuadTreeLeaves_intensity","colorEquilibrium","intensityEquilibrium")
 data_for_lm = mean_score_data[myvars]
 
-dlm_dim <- dim(data_for_lm)
-print(c("d for lm dims: ", dlm_dim))
+data_for_lm_by_website <- data_for_lm %>%
+  distinct(websiteName, .keep_all = TRUE)
+
+data_for_lm_by_website<-na.omit(data_for_lm_by_website)
+
+data_for_lm_by_website
+dim(data_for_lm_by_website)
 ```
 
 ### Confirmatory analysis
@@ -146,7 +201,7 @@ The main contribution of the original paper's experiments that are the focus of 
 ```{r}
 #### Create model
 #get initial fit
-fit <- lm(meanScore ~ black+silver+gray+white+maroon+red+purple+fuchsia+green+lime+olive+yellow+navy+blue+teal+aqua+hue+saturation+value+textArea+nonTextArea+numOfLeaves+percentageOfLeafArea+numOfTextGroup+numOfImageArea+colorfulness1+colorfulness2+colorHorizontalSymmetry+colorVerticalSymmetry+intensityHorizontalSymmetry+intensityVerticalSymmetry+intensityHorizontalBalance+intensityVerticalBalance+numOfQuadTreeLeaves_color+numOfQuadTreeLeaves_intensity+colorEquilibrium+intensityEquilibrium, data=na.omit(data_for_lm))
+fit <- lm(meanScore ~ black+silver+gray+white+maroon+red+purple+fuchsia+green+lime+olive+yellow+navy+blue+teal+aqua+hue+saturation+value+textArea+nonTextArea+numOfLeaves+percentageOfLeafArea+numOfTextGroup+numOfImageArea+colorfulness1+colorfulness2+colorHorizontalSymmetry+colorVerticalSymmetry+intensityHorizontalSymmetry+intensityVerticalSymmetry+intensityHorizontalBalance+intensityVerticalBalance+numOfQuadTreeLeaves_color+numOfQuadTreeLeaves_intensity+colorEquilibrium+intensityEquilibrium, data=data_for_lm_by_website, na.action=na.exclude)
 
 #do backward elimination
 stepped_model <- step(fit, direction = "backward", trace=FALSE ) 
@@ -157,18 +212,16 @@ summary(stepped_model)
 
 ```{r}
 #### plot data
-ggplotRegression <- function (fit) {
-ggplot(fit$model, aes_string(x = names(fit$model)[2], y = names(fit$model)[1])) + 
+pdf('model.pdf',width=6,height=6,paper='special')
+ggplot(stepped_model$model, aes_string(x = fitted(stepped_model), y = data_for_lm_by_website$meanScore)) +
   geom_point() +
   stat_smooth(method = "lm", col = "red") +
-  labs(title = paste("Adj R2 = ",signif(summary(fit)$adj.r.squared, 5),
-                     "Intercept =",signif(fit$coef[[1]],5 ),
-                     " Slope =",signif(fit$coef[[2]], 5),
-                     " P =",signif(summary(fit)$coef[2,4], 5)), x = "predicted colorfulness ratings", y = "observed colorfulness ratings") + theme_bw() + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
-}
-
-#generate plot
-ggplotRegression(stepped_model) 
+  scale_x_continuous(limits=c(1, 9), breaks=seq(1,9,1))+
+  scale_y_continuous(limits=c(1, 9), breaks=seq(1,9,1))+
+  labs(title = paste("Adj R2 = ",signif(summary(stepped_model)$adj.r.squared, 5),
+                     "Intercept =",signif(stepped_model$coef[[1]],5 ),
+                     " Slope =",signif(stepped_model$coef[[2]], 5),
+                     " P =",signif(summary(stepped_model)$coef[2,4], 5)), x = "predicted colorfulness ratings", y = "observed colorfulness ratings") + theme_classic() + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
 ```
 
 
@@ -189,23 +242,89 @@ only_in_replication <- setdiff(sig_factors, in_both_models)
 sig_models_union <- union(original_sig_factors, sig_factors)
 jaccard_index <- length(in_both_models)/length(sig_models_union) #union divided by intersection
 
+jaccard_index
+in_both_models
+only_in_original
+only_in_replication
 
-print(c("the image stats in both models are: ", in_both_models))
-#print(c("the image stats in the original but not the replication are: ", only_in_original))
-#print(c("the image stats in the replication but not the original are: ", only_in_replication))
-print(c("the jaccard index is: ", jaccard_index))
+
+print(c("the image stats in both models are: ", in_both_models), quote = F)
+print(c("the image stats in the original but not the replication are: ", only_in_original), quote = F)
+print(c("the image stats in the replication but not the original are: ", only_in_replication), quote = F)
+print(c("the jaccard index is: ", jaccard_index), quote = F)
 
 
 #show model summary with feature correlations
 summary(stepped_model, correlation = TRUE)
 ```
 
+```{r}
+corr_data <- summary(stepped_model, correlation = TRUE)$correlation
+# corr_data2 <- data.frame(corr_data) %>%
+#   filter_all(all_vars(abs(.) > .3))
+# 
+ 
+reorder_cormat <- function(cormat){
+# Use correlation between variables as distance
+dd <- as.dist((1-cormat)/2)
+hc <- hclust(dd)
+cormat <-cormat[hc$order, hc$order]
+}
+
+library(reshape2)
+melted_cormat <- melt(reorder_cormat(corr_data))
+head(melted_cormat)
+
+ggplot(data = melted_cormat, aes(x=Var1, y=Var2, fill=value)) + 
+  geom_tile(color = "white") +
+  scale_fill_gradient2(low = "blue", high = "red", mid = "white", 
+   midpoint = 0, limit = c(-1,1), space = "Lab", 
+    name="Correlation") +
+  theme_minimal()+ # minimal theme
+ theme(axis.text.x = element_text(angle = 45, vjust = 1.1, 
+    size = 6, hjust = 1), axis.text.y = element_text(vjust = 0, 
+    size = 6, hjust = 1)) +
+  coord_fixed() +
+  labs(title = "Correlations between features", x = "Image features", y = "Image features")
+
+
+diag(corr_data)=NA
+#corr_data
+#which(corr_data == max(corr_data), arr.ind = TRUE)
+corr_data_table = data.frame(corr_data)
+
+top_n(corr_data_table, 10)
+o = order(corr_data_table, decreasing=TRUE)[1:10]
+```
+
 ## Discussion
 
 ### Summary of Replication Attempt
 
-Open the discussion section with a paragraph summarizing the primary result from the confirmatory analysis and the assessment of whether it replicated, partially replicated, or failed to replicate the original result.  
+In this replication, the goal is building a model of colorfulness similar to the original result and then comparing the two models. `r length(in_both_models)` out of `r length(original_sig_factors)` of the significant factors in the original model appeared in the replication model. "Green" and "Saturation" were the only features that were in the original model but not in the replication. The replication model, however, had `r length(only_in_replication)` additional significant features. The Jaccard index corresponding the comparison between the two models is `r round(jaccard_index, 2)`. This indicates the models have a moderate amount of overlap.
+
+To follow up our comparison of the two models, we examined the correlations between different image features.
 
 ### Commentary
+While we did not expect to exactly replicate the original model, we can gain some insight into the process by building a similar model. It seems like this type of model can easily be prone to overfitting, and there can be some variability in which image statistics are relevant. 
 
 Add open-ended commentary (if any) reflecting (a) insights from follow-up exploratory analysis, (b) assessment of the meaning of the replication (or not) - e.g., for a failure to replicate, are the differences between original and present study ones that definitely, plausibly, or are unlikely to have been moderators of the result, and (c) discussion of any objections or challenges raised by the current and original authors about the replication attempt.  None of these need to be long.
+
+
+```{r}
+df2 = summary(stepped_model, correlation = TRUE)$correlation
+hc = abs(df2) > 0.3
+#hc = sort(hc)
+#reduced_Data = df2[,-c(hc)]
+#print (reduced_Data)
+which(hc)
+a <- which(abs(df2) > 0.5 & abs(df2) < 1.0,arr.ind=T)
+rn <- data.frame(row.names(df2[a[,1],] )) #row names
+cn <- data.frame(colnames(df2[,a[,2]]))     #column names
+
+dim(rn)
+dim(cn)
+
+merge(rn, cn, by=0)
+```
+
