@@ -13,7 +13,7 @@ default usage: python postprocess.py
 
 WORKER_HEADERS = ["workerNum", "retake", "gender", "age", "country", "years", "residence", "education", "vision", "websiteName", "trialNum", "image_type", "score", "score2"]
 IMAGE_STATS_DATA = "./replication_data/subset.csv" #image stats from Reinecke et al.
-OUT_PATH = "./replication_data/pilotB_out.csv"
+OUT_PATH = "./replication_data/finalDataCollection_out.csv"
 WORKER_DATA_DIR = "./mturk_experiment/production-results/" #data from MTurk
 
 def write_csv(data, out_filepath):
