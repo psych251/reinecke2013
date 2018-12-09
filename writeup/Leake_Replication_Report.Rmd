@@ -212,7 +212,7 @@ summary(stepped_model)
 
 ```{r}
 #### plot data
-pdf('model.pdf',width=6,height=6,paper='special')
+#pdf('model.pdf',width=6,height=6,paper='special')
 ggplot(stepped_model$model, aes_string(x = fitted(stepped_model), y = data_for_lm_by_website$meanScore)) +
   geom_point() +
   stat_smooth(method = "lm", col = "red") +
@@ -328,3 +328,187 @@ dim(cn)
 merge(rn, cn, by=0)
 ```
 
+```{r}
+# # stepped_model$model, aes_string(x = fitted(stepped_model), y = data_for_lm_by_website$meanScore))
+# library(ggvis)
+# newdata <- data_for_lm_by_website[order(data_for_lm_by_website$meanScore),] 
+# newdata
+# 
+# vis_names <- function(y) {
+#   if(is.null(y)) return(NULL)
+#   #paste("<img src = 0.jpg<img>",collapse="<br />")
+#   paste(map_y_to_row(y$ydata),collapse="<br />")
+# }
+# 
+# map_y_to_row <- function(y) {
+#   print(y)
+#   return(data_for_lm_by_website$websiteName[data_for_lm_by_website$meanScore==y])
+# }
+# xdata <- fitted(stepped_model)
+# ydata <- data_for_lm_by_website$meanScore
+# ggvis(stepped_model$model, ~xdata, ~ydata) %>%
+#     layer_points() %>%
+#     add_tooltip(vis_names, "hover")
+
+
+```
+
+```{r}
+# library(tidyverse)
+# library(plotly)
+# 
+# g <- ggplot(stepped_model$model, aes_string(x = fitted(stepped_model), y = data_for_lm_by_website$meanScore)) + geom_point()
+# p <- ggplotly(g, tooltip = "text")
+# 
+# 
+# p %>% htmlwidgets::onRender("
+#     function(el, x) {
+#       // when hovering over an element, do something
+#       el.on('plotly_hover', function(d) {
+# 
+#         // extract tooltip text
+#         txt = d.points[0].data.text;
+#         // image is stored locally
+#         image_location = './website_stimuli/english/4.png';
+# 
+#         // define image to be shown
+#         var img = {
+#           // location of image
+#           source: image_location,
+#           // top-left corner
+#           x: 0,
+#           y: 1,
+#           sizex: 0.2,
+#           sizey: 0.2,
+#           xref: 'paper',
+#           yref: 'paper'
+#         };
+# 
+#         // show image and annotation 
+#         Plotly.relayout(el.id, {
+#             images: [img] 
+#         });
+#       })
+#     }
+#     ")
+
+```
+
+```{r}
+# corr_data <- summary(fit, correlation = TRUE)$correlation
+# 
+# 
+# # corr_data2 <- data.frame(corr_data) %>%
+# #   filter_all(all_vars(abs(.) > .3))
+# # 
+#  
+# reorder_cormat <- function(cormat){
+# # Use correlation between variables as distance
+# dd <- as.dist((1-cormat)/2)
+# hc <- hclust(dd)
+# cormat <-cormat[hc$order, hc$order]
+# }
+# 
+# library(reshape2)
+# melted_cormat <-melt(corr_data)
+# melted_cormat$value <- as.numeric(melted_cormat$value)
+# melted_cormat
+# melted_without_intercept <- melted_cormat %>% 
+#   filter(Var1 != "(Intercept)" & Var2 != "(Intercept)")
+# 
+# head(melted_without_intercept)
+# purple_data <- melted_without_intercept %>%
+#   filter(Var1 == "white", Var2 == "white")
+# purple_data
+# 
+# target <- c("aqua", "teal", "blue", "navy", "yellow", "olive", "lime", "green", "fuchsia", "purple", "red", "maroon", "white", "gray", "silver", "black")
+# 
+# subdata <- melted_without_intercept %>%
+#   filter(Var1 %in% target & Var2 %in% target)
+# 
+# 
+# 
+# pdf('heatmap.pdf',width=6,height=6,paper='special')
+# ggplot(data = melted_without_intercept, aes(x=Var1, y=Var2, fill=value*1.0)) + 
+#   geom_tile(color = "white") +
+#   scale_fill_gradient2(low = "blue", high = "red", mid = "white", 
+#    midpoint = 0, limit = c(-1.1,1.1), space = "Lab", 
+#     name="Correlation") +
+#   theme_minimal()+ # minimal theme
+#  theme(axis.text.x = element_text(angle = 45, vjust = 1.1, 
+#     size = 6, hjust = 1), axis.text.y = element_text(vjust = 0, 
+#     size = 6, hjust = 1)) +
+#   coord_fixed() +
+#   labs(title = "Image features correlations", x = "Image features", y = "Image features")
+```
+
+```{r}
+# doriginal <- read_csv("../original_data/all.csv")
+# d_dim <- dim(doriginal)
+```
+
+```{r}
+# head(doriginal)
+# 
+# data_per_website <- doriginal %>%
+#   group_by(website) %>%
+#   filter(n() >= 4,!grepl("grayscale", website), !grepl("practice", website))%>%
+#   select(c(mean_response, black, silver, gray, white, maroon, red, purple, fuchsia, green, lime, olive, yellow, navy, blue, teal, aqua, hue, saturation, value, textArea, nonTextArea, numOfLeaves, percentageOfLeafArea, numOfTextGroup, numOfImageArea, colorfulness1, colorfulness2, colorHorizontalSymmetry, colorVerticalSymmetry, intensityHorizontalSymmetry, intensityVerticalSymmetry, intensityHorizontalBalance, intensityVerticalBalance, numOfQuadTreeLeaves_color, numOfQuadTreeLeaves_intensity, colorEquilibrium, intensityEquilibrium))%>%
+#   mutate(meanScore = mean(mean_response)) %>%
+#   distinct(website, .keep_all=TRUE)
+# 
+# head(data_per_website)
+# #data_per_website<-na.omit(data_per_website)
+# head(data_per_website)
+# dim(data_per_website)
+# head(data_for_lm)
+# #get initial fit
+# fit <- lm(meanScore ~ black+silver+gray+white+maroon+red+purple+fuchsia+green+lime+olive+yellow+navy+blue+teal+aqua+hue+saturation+value+textArea+nonTextArea+numOfLeaves+percentageOfLeafArea+numOfTextGroup+numOfImageArea+colorfulness1+colorfulness2+colorHorizontalSymmetry+colorVerticalSymmetry+intensityHorizontalSymmetry+intensityVerticalSymmetry+intensityHorizontalBalance+intensityVerticalBalance+numOfQuadTreeLeaves_color+numOfQuadTreeLeaves_intensity+colorEquilibrium+intensityEquilibrium, data=data_per_website, na.action=na.exclude)
+# 
+# #do backward elimination
+# stepped_model <- step(fit, direction = "backward", trace=FALSE ) 
+# 
+# #show model summary
+# summary(stepped_model)
+
+```
+
+```{r}
+fit <- lm(meanScore ~ black+silver+gray+white+maroon+red+purple+fuchsia+green+lime+olive+yellow+navy+blue+teal+aqua+hue+saturation+value+textArea+nonTextArea+numOfLeaves+percentageOfLeafArea+numOfTextGroup+numOfImageArea+colorfulness1+colorfulness2+colorHorizontalSymmetry+colorVerticalSymmetry+intensityHorizontalSymmetry+intensityVerticalSymmetry+intensityHorizontalBalance+intensityVerticalBalance+numOfQuadTreeLeaves_color+numOfQuadTreeLeaves_intensity+colorEquilibrium+intensityEquilibrium, data=data_for_lm_by_website, na.action=na.exclude)
+
+my_fit <- data.frame(my_params = c(coef(fit)))
+my_fit <- cbind(rownames(my_fit), my_fit)
+rownames(my_fit) <- NULL
+colnames(my_fit) <- c("feature","my_params")
+
+their_data <- data_frame(feature = c("(Intercept)", "black", "silver", "gray", "white", "maroon", "red", "purple", "fuchsia", "green", "lime", "olive", "yellow", "navy", "blue", "teal", "aqua", "hue", "saturation", "value", "textArea", "nonTextArea", "numOfLeaves", "percentageOfLeafArea", "numOfImageArea", "colorfulness1", "colorfulness2", "colorHorizontalSymmetry", "colorVerticalSymmetry", "intensityHorizontalSymmetry", "intensityVerticalSymmetry", "intensityHorizontalBalance", "intensityVerticalBalance", "numOfQuadTreeLeaves_color", "numOfQuadTreeLeaves_intensity", "colorEquilibrium", "intensityEquilibrium"), their_params = c(-.68, 0, 0, 2.45, 2.74, 1.60, 0, 0, 0, 1.85, -3.17, 0, 0, 0, -3.91, 1.01, 0, 0, 0.01, 0, -0.00000148, 0.00000186, 0.000374, 0, 0.06, 0, 0.03, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0))
+
+#combined_params <- left_join(my_fit, their_data)
+#combined_params
+
+their_params = c(-.68, 0, 0, 2.45, 2.74, 1.60, 0, 0, 0, 1.85, -3.17, 0, 0, 0, -3.91, 1.01, 0, 0, 0.01, 0, -0.00000148, 0.00000186, 0.000374, 0, 0.06, 0, 0.03, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+
+#fit$coefficients
+fit$coefficients[1:length(fit$coefficients)] <- their_params
+#fit$coefficients
+
+new_predictions <- predict(fit, data_for_lm_by_website)
+#new_predictions
+
+#https://stackoverflow.com/questions/45793683/r-determine-goodness-of-fit-of-new-data-with-predict-function-based-on-existin
+r_squared <- function(vals, preds) {
+  1 - (sum((vals - preds)^2) / sum((vals - mean(preds, na.rm = T))^2))
+}
+
+r_squared_a <- function(vals, preds, k) {
+  1 - ((1-r_squared(vals, preds))*(length(preds)-1))/(length(preds) - k - 1)
+}
+
+# Test
+new_r2 <- r_squared(na.omit(data_for_lm_by_website$meanScore), na.omit(new_predictions))
+new_r2
+
+new_r2_a <- r_squared_a(na.omit(data_for_lm_by_website$meanScore), na.omit(new_predictions), 13)
+new_r2_a
+#summary.lm
+```
