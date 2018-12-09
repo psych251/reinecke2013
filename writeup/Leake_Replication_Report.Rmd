@@ -12,25 +12,15 @@ output:
 
 <!-- Replication reports should all use this template to standardize reporting across projects.  These reports will be public supplementary materials that accompany the summary report(s) of the aggregate results. -->
 
-##Project proposal from 10/5
-For this project I chose the paper "Predicting Users' First Impressions of Website Aesthetics With a Quantification of Perceived Visual Complexity and Colorfulness" by Reinecke et al. This paper was published at CHI 2013, which is a publication venue that is very relevant to my research in HCI and computer graphics. I chose this paper on evaluating users' first impressions of websites because I am interested in learning several aspects of their methodology. I have never used MTurk to run experiments, though it is common in my research area, and this is something I would like to learn in this project. I am also interested in how the authors took something subjective like the visual appeal of websites and created more objective criteria to explore specific questions. This is relevant to my work as a CS PhD student, which focuses on building video editing systems. I am often tasked with developing computational models of creative decisions and evaluating users' perceptions and experiences using the tools I build.
-
-I am interested in replicating the initial experiments discussed in the section "Evaluation of Image Metrics" on pages 4-7 in the paper. Essentially, the researchers evaluate if they can use computational metrics of color and visual complexity to predict user ratings of these website qualities. To run these experiments they collected a set of 450 website image screenshots. These included 350 in English, 60 foreign websites, 20 grayscale images, and 20 websites that were nominated for Webby Awards. For a follow up paper the authors provided a zip file with all of these website images, and I am able to download and open these images. I would hope to use these same images in my replication project. The researchers showed each participant 30 website images in random order for 500ms and asked each participant to rate each website on a 9-point Likert scale from "not at all colorful" to "very colorful" and "not at all complex" to "very complex." They also collected demographic data, including age, gender, education level, and country of residence, though their analysis indicates that none of these demographic variables affected their model of colorfulness and visual complexity. 
-
-To replicate their experiment I plan to start with the same website images they provide and use their code for computing image metrics. Though the authors provide their (not particularly well-documented) Java code for computing visual features for website images and describe the different metrics, I expect there to be some challenge in running this code and understanding the different metrics. I will then need to set up an experiment on MTurk to show the provided website images to people for the same time period (500ms) and collect their ratings for colorfulness and complexity using the same Likert scale as the original experiments. Since I have not run a MTurk experiment before, I think that setting up the experiment and showing images for a fixed amount of time to participants will require some learning on my part. Once I compute the image metrics and collect data on MTurk, I will need to compute regression models to compare the predicted colorfulness and visual complexity data with the observations from the MTurk data. The authors discuss using multiple linear regression with backward elimination, which is not a statistical technique I have used before. Though replicating this project has several challenges in terms of figuring out the original authors' computational image metrics, running a MTurk experiment, and using unfamiliar statistical techniques, I think that each of these challenges is relevant to other challenges I will face in my own research. 
-
-Link to repo: [link](https://github.com/mleake/reinecke2013)  
-Link to paper: [link](https://github.com/mleake/reinecke2013/blob/master/original_paper/reinecke2013.pdf)
-
 ##Introduction
-In their original paper "Predicting Users' First Impressions of Website Aesthetics With a Quantification of Perceived Visual Complexity and Colorfulness" Reinecke et al. propose a computational model for predicting users' initial reactions to a website's appearance. This paper builds upon the existing literature that indicates that colorfulness and visual complexity are the two primary design features that contribute to website aesthetics. The authors propose models for predicting users' ratings of colorfulness and visual complexity based on automatically computed low-level image features. The focus of this replication is the colorfulness model.
+In the original paper "Predicting Users' First Impressions of Website Aesthetics With a Quantification of Perceived Visual Complexity and Colorfulness" Reinecke et al. propose a computational model for predicting users' initial reactions to a website's appearance. This paper builds upon the existing literature that indicates that colorfulness and visual complexity are the two primary design features that contribute to website aesthetics. The authors propose models for predicting users' ratings of colorfulness and visual complexity based on automatically computed low-level image features. The focus of this replication is the colorfulness model.
 
-In this replication of the colorfulness experiment conducted by Reinecke et al. (2013), we aim to reproduce the methodology used in the original paper. First, we use the authors' provided low-level image features of the website images. These features include the basic HTML colors as well as measures of colorfulness and information density. Next, we conduct an experiment on MTurk, asking users to rate the colorfulness of these images. From the data we develop a computational model relating the low-level image statistics to users' ratings of colorfulness, as the original authors did.
+In this replication of the colorfulness model generated by Reinecke et al. (2013), we aim to reproduce the methodology used in the original paper. First, we use the authors' provided website screen shots and their computed low-level image features. These features include the basic HTML colors as well as measures of colorfulness and information density. Next, we conduct an experiment on MTurk, asking users to rate the colorfulness of these images. From the data we develop a computational model relating the low-level image statistics to users' ratings of colorfulness, as the original authors do.
 
 ##Methods
 
 ###Power Analysis
-For this particular analysis, power analysis is not appropriate. We use 100 participants and have each rate 30 images so that we have enough ratings for each of the 450 randomly selected website images.
+For this particular analysis, power analysis is not appropriate. We use 100 participants and have each rate 30 images so that we have enough ratings for most of the 450 randomly selected website images.
 
 ###Planned Sample
 We use a similar sample to the participant sample selected in the original paper, described as:
@@ -56,24 +46,23 @@ The goal of this analysis is to replicate the first set of experiments in Reinec
 
 We do not follow the second guideline for data exclusion because this replication does not collect data on mean complexity.
 
-The primary analysis to perform is computing the prediction model for perceived colorfulness. For this analysis we use multiple linear regression with backward elimination. The model begins the authors' original set of image statistics, and then different variables are removed according to the process described in the original paper: 
+The primary analysis to perform is computing the prediction model for perceived colorfulness. For this analysis we use multiple linear regression with backward elimination. The model begins with the authors' original set of image statistics, and then different variables are removed according to the process described in the original paper: 
 
 >"In this method, all predictors are initially added to the model, and iteratively removed if they do not make a statistically significant contribution to how well the model predicts the outcome variable (the ratings, in our case). At each step, the remaining predictors are reassessed in terms of their contribution to the newly calculated model." 
 
 The goal of these analyses is to replicate the paper's models for predicting users' ratings of colorfulness based on specific low-level image features generated computationally.
 
 ###Differences from Original Study
-All experiments were run on MTurk as opposed to Lab in the Wild, which has an unpaid citizen science reward model. Characterizing participants on Lab in the Wild is an area of ongoing research. So far researchers have found that participants come from almost every country in the world and users are motivated to participate because they get to see how their results compare to others (Reinecke & Gajos, 2015). We do not anticipate that the difference in experiment platform will influence the results in this study. The original study participants were as young as 15, but in this replication the minimum age is set at 18, as required by MTurk. One step in the authors' original experiments is determining if users' demographic backgrounds influence their judgment of website colorfulness and visual complexity. The original finding is that these demographic variables do not influence these specific aesthetic judgments.
+All experiments in the replication are run on MTurk as opposed to Lab in the Wild, which has an unpaid citizen science reward model. Characterizing participants on Lab in the Wild is an area of ongoing research. So far researchers have found that participants come from almost every country in the world and users are motivated to participate because they get to see how their results compare to others (Reinecke & Gajos, 2015). We do not anticipate that the difference in experiment platform will influence the results in this study. The original study participants were as young as 15, but in this replication the minimum age is set at 18, as required by MTurk. One step in the authors' original experiments is determining if users' demographic backgrounds influence their judgments of website colorfulness and visual complexity. The original finding is that these demographic variables do not influence these specific aesthetic judgments.
 
-
-
-```{r echo = TRUE}
+```{r include = F}
 #note later switch to {r include = F}
 ####Load Relevant Libraries and Functions
 library(tidyverse)
 library(readr)
 require(ggplot2)
 library(dplyr)
+library(reshape2)
 
 ###Data Preparation
 data_path = "../replication_data/finalDataCollection_out.csv" 
@@ -81,46 +70,38 @@ data_path = "../replication_data/finalDataCollection_out.csv"
 ####Import data
 d <- read_csv(data_path)
 d_dim <- dim(d)
-print(c("d dims: ", d_dim))
-head(d)
+#print(c("d dims: ", d_dim))
+#head(d)
 ```
-```{r}
+```{r include = F}
 #### Data exclusion / filtering
 # get the number of participants
 num_workers_start <- length(unique(d$workerNum)) #before filtering
 num_retake <- length(unique(d$workerNum[which(d$retake == 'Yes')])) #number who checked retake
 num_vision_no <- length(unique(d$workerNum[which(d$vision == 'No')])) #number who failed vision check
 
-print(c("started with ", num_workers_start, " participants"), quote = F)
-print(c(num_retake, " indicated retake"), quote = F)
-print(c(num_vision_no, " participants did not pass the vision test"), quote = F)
+# print(c("started with ", num_workers_start, " participants"), quote = F)
+# print(c(num_retake, " indicated retake"), quote = F)
+# print(c(num_vision_no, " participants did not pass the vision test"), quote = F)
 
-#get rid of workers who have taken the test before or don't meet the vision requirement and all grayscale and practice images
+#get rid of workers who have taken the test before or don't meet the vision requirement; also remove all grayscale and practice images
 filtered_data <- d %>%
   filter(retake == 'No', vision == 'Yes', image_type != "grayscale", image_type != "practice")
 
 #get the number of workers after filtering
 num_workers_end <- length(unique(filtered_data$workerNum))
-print(c("ended with ", num_workers_end, " participants"), quote = F)
+#print(c("ended with ", num_workers_end, " participants"), quote = F)
 
 # filter CSV for websites with too few ratings
 website_count_filtered_data <- filtered_data %>%
   group_by(websiteName) %>%
   filter(n() >= 4) #exclude websites without at least 4 ratings
 
-print(c("the new dims after filtering are: ", dim(website_count_filtered_data)))
-
-num_before_websites <- length(unique(d$websiteName)) #number of websites at start
-num_remove_grayscale_practice <- length(unique(filtered_data$websiteName)) #number of websites filtered for grayscale or practice
-num_final_websites <- length(unique(website_count_filtered_data$websiteName)) #number of websites after filtering for count
-print(c("started with ", num_before_websites, " website images"), quote = F)
-print(c("got ", num_remove_grayscale_practice, " website images with grayscale and practice filter"), quote = F)
-print(c("got ", num_final_websites, " website images after count filter"), quote = F)
+#print(c("the new dims after filtering are: ", dim(website_count_filtered_data)))
 ```
 
-```{r}
+```{r include = F}
 #demographic data
-
 age_data <- filtered_data %>%
   group_by(workerNum) %>%
   summarize(agePerWorker = age[1]) %>%
@@ -142,22 +123,21 @@ numMen = sum(gender_data$isMan)
 numOther = sum(gender_data$isOther)
 
 #look at gender of participants
-print(c("number of women: ", numWomen), quote = F)
-print(c("number of men: ", numMen), quote = F)
-print(c("number of other: ", numOther), quote = F)
+# print(c("number of women: ", numWomen), quote = F)
+# print(c("number of men: ", numMen), quote = F)
+# print(c("number of other: ", numOther), quote = F)
 ```
 
 ### Methods Addendum (Post Data Collection)
 
 #### Actual Sample
-#Sample size, demographics, data exclusions based on rules spelled out in analysis plan
-We started with 100 workers recruited on MTurk. `r num_vision_no` participants did not meet the vision criteria of normal or corrected-to-normal vision and color vision. `r num_retake` participants indicated they were retaking the test so their responses were excluded. Our final participant sample had `r num_workers_end` participants.
+We started with 100 workers recruited on MTurk. `r num_vision_no` participants did not meet the vision criteria of normal or corrected-to-normal vision and color vision. `r num_retake` participants indicated they were retaking the test so their responses were excluded. Our final participant sample had `r num_workers_end` participants (`r numWomen` women and `r numMen` men). The mean age of participants was `r age_data$meanAge`, and workers ranged in age from `r age_data$minAge` to `r age_data$maxAge`.
 
-The original study authors provided 450 images. They excluded 15 images based on additional exclusion criteria for their subsequent models, so for our replication we started with these 435 website images from the original authors. In our analysis we excluded the practice and grayscale images as well as any images without at least 4 ratings. After this filtering stage, we were left with `r num_final_websites` website images to use in our analysis.
+The original study authors provided 450 images. They excluded 15 images based on additional exclusion criteria for their subsequent models, so for our replication we started with these 435 website images from the original authors. In our analysis we excluded the practice and grayscale images as well as any images without at least 4 ratings. After this filtering stage, we were left with 282 website images to use in our analysis.
 
 
 #### Differences from pre-data collection methods plan
-  Any differences from what was described as the original plan, or “none”.
+None.
 
 
 ##Results
@@ -166,39 +146,45 @@ The original study authors provided 450 images. They excluded 15 images based on
 ### Data preparation
 We collect data for both the computational image statistics as well as users' ratings of website image colorfulness. First, we begin with the authors' computed image statstics. Each of these different image measurements is treated as a single variable in our regression. For each user we collect their age, country of residence, native language, highest level of education, and if they have normal or corrected-to-normal vision. We exclude all data from participants without normal or corrected-to-normal vision.
 
-For all of the analyses, the data are organized with each row is a different observation for user data (i.e., each participant, website, and trial matching). We merge the user data with the computational image metrics by adding columns to the data for each of the computational image metrics (16 HTML colors and 21 additional derived metrics).
-
-Next, we determine which data to exclude from the analyses based on the original study's exclusion criteria. First, we compute which websites had three or fewer ratings and eliminate this data.
+For all of the analyses, the data are organized with each row as a different observation for user data (i.e., each participant, website, and trial matching). We merge the user data with the computational image metrics by adding columns to the data for each of the computational image metrics (16 HTML colors and 21 additional derived metrics), and then we group the data by website image. We then identify websites with three or fewer ratings and filter out this data.
 
 For the primary analysis: developing a model to compare the image metrics to users' ratings of colorfulness, we prepare our data for running multiple linear regression with backward elimination. To do this we start with all of our low-level image features as the independent variables and the participants' mean colorfulness scores as the dependent variable. We iteratively remove image feature variables if they do not make statistically significant contributions to the model and update the model.
 
 
-```{r}
+```{r include = F}
 #### Prepare data for analysis - create columns etc.
 #add a column for mean score
 mean_score_data <- website_count_filtered_data %>%
-  mutate(meanScore = (score + score2)/2.0) %>% #add the mean for each trial
+  mutate(meanScore = (score + score2)/2.0) %>% #add a column with the mean for each trial
   group_by(websiteName) %>% #group data by website name
   mutate(meanScore = mean(meanScore))
-
 
 #all column names for model
 myvars = c("websiteName", "meanScore", "black","silver","gray","white","maroon","red","purple","fuchsia","green","lime","olive","yellow","navy","blue","teal","aqua","hue","saturation","value","textArea","nonTextArea","numOfLeaves","percentageOfLeafArea","numOfTextGroup","numOfImageArea","colorfulness1","colorfulness2","colorHorizontalSymmetry","colorVerticalSymmetry","intensityHorizontalSymmetry","intensityVerticalSymmetry","intensityHorizontalBalance","intensityVerticalBalance","numOfQuadTreeLeaves_color","numOfQuadTreeLeaves_intensity","colorEquilibrium","intensityEquilibrium")
 data_for_lm = mean_score_data[myvars]
 
+#reduce data to one row per website
 data_for_lm_by_website <- data_for_lm %>%
   distinct(websiteName, .keep_all = TRUE)
 
+#remove all na values as a preprocessing step
 data_for_lm_by_website<-na.omit(data_for_lm_by_website)
 
-data_for_lm_by_website
-dim(data_for_lm_by_website)
+#data_for_lm_by_website
+#dim(data_for_lm_by_website)
+
+num_before_websites <- length(unique(d$websiteName)) #number of websites at start
+num_remove_grayscale_practice <- length(unique(data_for_lm_by_website$websiteName)) #number of websites filtered for grayscale or practice
+num_final_websites <- length(unique(data_for_lm_by_website$websiteName)) #number of websites after filtering for count
+# print(c("started with ", num_before_websites, " website images"), quote = F)
+# print(c("got ", num_remove_grayscale_practice, " website images with grayscale and practice filter"), quote = F)
+# print(c("got ", num_final_websites, " website images after count filter"), quote = F)
 ```
 
 ### Confirmatory analysis
 The main contribution of the original paper's experiments that are the focus of this replication report is the model predicting users' ratings of a website's colorfulness from low-level image features of the website. We replicate this original model using our collected user colorfulness scores and the provided image statistics. We use multiple linear regression with backward elimination to eliminate not statistically significant image features and build our final model.
 
-```{r}
+```{r include = F}
 #### Create model
 #get initial fit
 fit <- lm(meanScore ~ black+silver+gray+white+maroon+red+purple+fuchsia+green+lime+olive+yellow+navy+blue+teal+aqua+hue+saturation+value+textArea+nonTextArea+numOfLeaves+percentageOfLeafArea+numOfTextGroup+numOfImageArea+colorfulness1+colorfulness2+colorHorizontalSymmetry+colorVerticalSymmetry+intensityHorizontalSymmetry+intensityVerticalSymmetry+intensityHorizontalBalance+intensityVerticalBalance+numOfQuadTreeLeaves_color+numOfQuadTreeLeaves_intensity+colorEquilibrium+intensityEquilibrium, data=data_for_lm_by_website, na.action=na.exclude)
@@ -210,27 +196,46 @@ stepped_model <- step(fit, direction = "backward", trace=FALSE )
 summary(stepped_model)
 ```
 
-```{r}
+```{r include = F}
 #### plot data
 #pdf('model.pdf',width=6,height=6,paper='special')
-ggplot(stepped_model$model, aes_string(x = fitted(stepped_model), y = data_for_lm_by_website$meanScore)) +
-  geom_point() +
-  stat_smooth(method = "lm", col = "red") +
+replication_plot <- ggplot(stepped_model$model, aes_string(x = fitted(stepped_model), y = data_for_lm_by_website$meanScore)) +
+  geom_point(na.rm=TRUE) +
+  stat_smooth(method = "lm", col = "red", na.rm=TRUE) +
   scale_x_continuous(limits=c(1, 9), breaks=seq(1,9,1))+
   scale_y_continuous(limits=c(1, 9), breaks=seq(1,9,1))+
-  labs(title = paste("Adj R2 = ",signif(summary(stepped_model)$adj.r.squared, 5),
+ labs(title = paste("Adj R2 = ",signif(summary(stepped_model)$adj.r.squared, 5),
                      "Intercept =",signif(stepped_model$coef[[1]],5 ),
                      " Slope =",signif(stepped_model$coef[[2]], 5),
                      " P =",signif(summary(stepped_model)$coef[2,4], 5)), x = "predicted colorfulness ratings", y = "observed colorfulness ratings") + theme_classic() + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
+
 ```
+
+Here is a graphical comparison of the original model and the replication model:
+
+<div id = "imageholder" style = "width: 100%; display: inline;">
+<figure style = "display: inline;">
+<img width="80%" src="original_model.jpg"/>
+<figcaption>a) Original model (R^2 = 0.78, p < 0.001)</figcaption>
+</figure>
+</div>
+
+```{r echo = FALSE}
+replication_plot
+```
+<!-- <figure style = "display: inline;"> -->
+<!-- <img width="100%" src="model.jpg"/> -->
+<!-- <figcaption>b) Replication model (R^2 = 0.73, p < 0.001)</figcaption> -->
+<!-- </figure> -->
+<!-- </div> -->
 
 
 ###Exploratory analyses
 After building our model, our goal is to compare the model from this replication to the model the original authors provide. To do this we compare the sets of statistically significant image features in the two models and compute the Jaccard index. 
 
-Although the authors did not report feature correlations, we also examine the feature correlations to help build intuition about about why different image features were included in the final model. 
 
-```{r}
+
+```{r include = F}
 #comparison with original model
 significant_summary <- data.frame(summary(stepped_model)$coef[summary(stepped_model)$coef[,4] <= .05, 4])
 sig_factors <- c(row.names(significant_summary)[2:dim(significant_summary)[1]])
@@ -242,27 +247,25 @@ only_in_replication <- setdiff(sig_factors, in_both_models)
 sig_models_union <- union(original_sig_factors, sig_factors)
 jaccard_index <- length(in_both_models)/length(sig_models_union) #union divided by intersection
 
-jaccard_index
-in_both_models
-only_in_original
-only_in_replication
-
-
 print(c("the image stats in both models are: ", in_both_models), quote = F)
 print(c("the image stats in the original but not the replication are: ", only_in_original), quote = F)
 print(c("the image stats in the replication but not the original are: ", only_in_replication), quote = F)
 print(c("the jaccard index is: ", jaccard_index), quote = F)
-
-
-#show model summary with feature correlations
-summary(stepped_model, correlation = TRUE)
 ```
 
-```{r}
+
+Using this method, we find a Jaccard index of `r round(jaccard_index, 3)` indicating roughly `r round(jaccard_index, 3)*100` percent similarity between the features in the two models. Both models indicate white, green, lime, colorfulness, number of image areas, number of leaves, text area, and non-text area are significant features. The following image features were in the original model, but were not found to be significant in the replication: gray, maroon, blue, teal, and saturation. Percentage of leaf area, number of text groups, intensity for hoizontal balance, number of quadtree leaves for color, color equilibrium, and intensity equilibrium are features that appear in the replication model but not in the original.
+
+To follow up our comparison of the two models, we examined the correlations between different image features.
+
+Although the authors did not report feature correlations, we also examine the feature correlations to help build intuition about about why different image features are included in the final model. Through this analysis we find some expected correlations between features, such as between text and non-text areas, but the reasoning behind others is less clear.
+
+```{r include = F}
+#show model summary with feature correlations
+summary(stepped_model, correlation = TRUE)
+
+#get the feature correlations for the replication model
 corr_data <- summary(stepped_model, correlation = TRUE)$correlation
-# corr_data2 <- data.frame(corr_data) %>%
-#   filter_all(all_vars(abs(.) > .3))
-# 
  
 reorder_cormat <- function(cormat){
 # Use correlation between variables as distance
@@ -271,11 +274,10 @@ hc <- hclust(dd)
 cormat <-cormat[hc$order, hc$order]
 }
 
-library(reshape2)
+#reorder data for plotting heatmap
 melted_cormat <- melt(reorder_cormat(corr_data))
-head(melted_cormat)
 
-ggplot(data = melted_cormat, aes(x=Var1, y=Var2, fill=value)) + 
+heatmap_plot <- ggplot(data = melted_cormat, aes(x=Var1, y=Var2, fill=value)) + 
   geom_tile(color = "white") +
   scale_fill_gradient2(low = "blue", high = "red", mid = "white", 
    midpoint = 0, limit = c(-1,1), space = "Lab", 
@@ -286,216 +288,27 @@ ggplot(data = melted_cormat, aes(x=Var1, y=Var2, fill=value)) +
     size = 6, hjust = 1)) +
   coord_fixed() +
   labs(title = "Correlations between features", x = "Image features", y = "Image features")
-
-
-diag(corr_data)=NA
-#corr_data
-#which(corr_data == max(corr_data), arr.ind = TRUE)
-corr_data_table = data.frame(corr_data)
-
-top_n(corr_data_table, 10)
-o = order(corr_data_table, decreasing=TRUE)[1:10]
 ```
 
-## Discussion
-
-### Summary of Replication Attempt
-
-In this replication, the goal is building a model of colorfulness similar to the original result and then comparing the two models. `r length(in_both_models)` out of `r length(original_sig_factors)` of the significant factors in the original model appeared in the replication model. "Green" and "Saturation" were the only features that were in the original model but not in the replication. The replication model, however, had `r length(only_in_replication)` additional significant features. The Jaccard index corresponding the comparison between the two models is `r round(jaccard_index, 2)`. This indicates the models have a moderate amount of overlap.
-
-To follow up our comparison of the two models, we examined the correlations between different image features.
-
-### Commentary
-While we did not expect to exactly replicate the original model, we can gain some insight into the process by building a similar model. It seems like this type of model can easily be prone to overfitting, and there can be some variability in which image statistics are relevant. 
-
-Add open-ended commentary (if any) reflecting (a) insights from follow-up exploratory analysis, (b) assessment of the meaning of the replication (or not) - e.g., for a failure to replicate, are the differences between original and present study ones that definitely, plausibly, or are unlikely to have been moderators of the result, and (c) discussion of any objections or challenges raised by the current and original authors about the replication attempt.  None of these need to be long.
-
-
-```{r}
-df2 = summary(stepped_model, correlation = TRUE)$correlation
-hc = abs(df2) > 0.3
-#hc = sort(hc)
-#reduced_Data = df2[,-c(hc)]
-#print (reduced_Data)
-which(hc)
-a <- which(abs(df2) > 0.5 & abs(df2) < 1.0,arr.ind=T)
-rn <- data.frame(row.names(df2[a[,1],] )) #row names
-cn <- data.frame(colnames(df2[,a[,2]]))     #column names
-
-dim(rn)
-dim(cn)
-
-merge(rn, cn, by=0)
+```{r echo = FALSE}
+heatmap_plot
 ```
 
-```{r}
-# # stepped_model$model, aes_string(x = fitted(stepped_model), y = data_for_lm_by_website$meanScore))
-# library(ggvis)
-# newdata <- data_for_lm_by_website[order(data_for_lm_by_website$meanScore),] 
-# newdata
-# 
-# vis_names <- function(y) {
-#   if(is.null(y)) return(NULL)
-#   #paste("<img src = 0.jpg<img>",collapse="<br />")
-#   paste(map_y_to_row(y$ydata),collapse="<br />")
-# }
-# 
-# map_y_to_row <- function(y) {
-#   print(y)
-#   return(data_for_lm_by_website$websiteName[data_for_lm_by_website$meanScore==y])
-# }
-# xdata <- fitted(stepped_model)
-# ydata <- data_for_lm_by_website$meanScore
-# ggvis(stepped_model$model, ~xdata, ~ydata) %>%
-#     layer_points() %>%
-#     add_tooltip(vis_names, "hover")
-
-
-```
-
-```{r}
-# library(tidyverse)
-# library(plotly)
-# 
-# g <- ggplot(stepped_model$model, aes_string(x = fitted(stepped_model), y = data_for_lm_by_website$meanScore)) + geom_point()
-# p <- ggplotly(g, tooltip = "text")
-# 
-# 
-# p %>% htmlwidgets::onRender("
-#     function(el, x) {
-#       // when hovering over an element, do something
-#       el.on('plotly_hover', function(d) {
-# 
-#         // extract tooltip text
-#         txt = d.points[0].data.text;
-#         // image is stored locally
-#         image_location = './website_stimuli/english/4.png';
-# 
-#         // define image to be shown
-#         var img = {
-#           // location of image
-#           source: image_location,
-#           // top-left corner
-#           x: 0,
-#           y: 1,
-#           sizex: 0.2,
-#           sizey: 0.2,
-#           xref: 'paper',
-#           yref: 'paper'
-#         };
-# 
-#         // show image and annotation 
-#         Plotly.relayout(el.id, {
-#             images: [img] 
-#         });
-#       })
-#     }
-#     ")
-
-```
-
-```{r}
-# corr_data <- summary(fit, correlation = TRUE)$correlation
-# 
-# 
-# # corr_data2 <- data.frame(corr_data) %>%
-# #   filter_all(all_vars(abs(.) > .3))
-# # 
-#  
-# reorder_cormat <- function(cormat){
-# # Use correlation between variables as distance
-# dd <- as.dist((1-cormat)/2)
-# hc <- hclust(dd)
-# cormat <-cormat[hc$order, hc$order]
-# }
-# 
-# library(reshape2)
-# melted_cormat <-melt(corr_data)
-# melted_cormat$value <- as.numeric(melted_cormat$value)
-# melted_cormat
-# melted_without_intercept <- melted_cormat %>% 
-#   filter(Var1 != "(Intercept)" & Var2 != "(Intercept)")
-# 
-# head(melted_without_intercept)
-# purple_data <- melted_without_intercept %>%
-#   filter(Var1 == "white", Var2 == "white")
-# purple_data
-# 
-# target <- c("aqua", "teal", "blue", "navy", "yellow", "olive", "lime", "green", "fuchsia", "purple", "red", "maroon", "white", "gray", "silver", "black")
-# 
-# subdata <- melted_without_intercept %>%
-#   filter(Var1 %in% target & Var2 %in% target)
-# 
-# 
-# 
-# pdf('heatmap.pdf',width=6,height=6,paper='special')
-# ggplot(data = melted_without_intercept, aes(x=Var1, y=Var2, fill=value*1.0)) + 
-#   geom_tile(color = "white") +
-#   scale_fill_gradient2(low = "blue", high = "red", mid = "white", 
-#    midpoint = 0, limit = c(-1.1,1.1), space = "Lab", 
-#     name="Correlation") +
-#   theme_minimal()+ # minimal theme
-#  theme(axis.text.x = element_text(angle = 45, vjust = 1.1, 
-#     size = 6, hjust = 1), axis.text.y = element_text(vjust = 0, 
-#     size = 6, hjust = 1)) +
-#   coord_fixed() +
-#   labs(title = "Image features correlations", x = "Image features", y = "Image features")
-```
-
-```{r}
-# doriginal <- read_csv("../original_data/all.csv")
-# d_dim <- dim(doriginal)
-```
-
-```{r}
-# head(doriginal)
-# 
-# data_per_website <- doriginal %>%
-#   group_by(website) %>%
-#   filter(n() >= 4,!grepl("grayscale", website), !grepl("practice", website))%>%
-#   select(c(mean_response, black, silver, gray, white, maroon, red, purple, fuchsia, green, lime, olive, yellow, navy, blue, teal, aqua, hue, saturation, value, textArea, nonTextArea, numOfLeaves, percentageOfLeafArea, numOfTextGroup, numOfImageArea, colorfulness1, colorfulness2, colorHorizontalSymmetry, colorVerticalSymmetry, intensityHorizontalSymmetry, intensityVerticalSymmetry, intensityHorizontalBalance, intensityVerticalBalance, numOfQuadTreeLeaves_color, numOfQuadTreeLeaves_intensity, colorEquilibrium, intensityEquilibrium))%>%
-#   mutate(meanScore = mean(mean_response)) %>%
-#   distinct(website, .keep_all=TRUE)
-# 
-# head(data_per_website)
-# #data_per_website<-na.omit(data_per_website)
-# head(data_per_website)
-# dim(data_per_website)
-# head(data_for_lm)
-# #get initial fit
-# fit <- lm(meanScore ~ black+silver+gray+white+maroon+red+purple+fuchsia+green+lime+olive+yellow+navy+blue+teal+aqua+hue+saturation+value+textArea+nonTextArea+numOfLeaves+percentageOfLeafArea+numOfTextGroup+numOfImageArea+colorfulness1+colorfulness2+colorHorizontalSymmetry+colorVerticalSymmetry+intensityHorizontalSymmetry+intensityVerticalSymmetry+intensityHorizontalBalance+intensityVerticalBalance+numOfQuadTreeLeaves_color+numOfQuadTreeLeaves_intensity+colorEquilibrium+intensityEquilibrium, data=data_per_website, na.action=na.exclude)
-# 
-# #do backward elimination
-# stepped_model <- step(fit, direction = "backward", trace=FALSE ) 
-# 
-# #show model summary
-# summary(stepped_model)
-
-```
-
-```{r}
+```{r include = F}
 fit <- lm(meanScore ~ black+silver+gray+white+maroon+red+purple+fuchsia+green+lime+olive+yellow+navy+blue+teal+aqua+hue+saturation+value+textArea+nonTextArea+numOfLeaves+percentageOfLeafArea+numOfTextGroup+numOfImageArea+colorfulness1+colorfulness2+colorHorizontalSymmetry+colorVerticalSymmetry+intensityHorizontalSymmetry+intensityVerticalSymmetry+intensityHorizontalBalance+intensityVerticalBalance+numOfQuadTreeLeaves_color+numOfQuadTreeLeaves_intensity+colorEquilibrium+intensityEquilibrium, data=data_for_lm_by_website, na.action=na.exclude)
 
 my_fit <- data.frame(my_params = c(coef(fit)))
-my_fit <- cbind(rownames(my_fit), my_fit)
-rownames(my_fit) <- NULL
-colnames(my_fit) <- c("feature","my_params")
 
-their_data <- data_frame(feature = c("(Intercept)", "black", "silver", "gray", "white", "maroon", "red", "purple", "fuchsia", "green", "lime", "olive", "yellow", "navy", "blue", "teal", "aqua", "hue", "saturation", "value", "textArea", "nonTextArea", "numOfLeaves", "percentageOfLeafArea", "numOfImageArea", "colorfulness1", "colorfulness2", "colorHorizontalSymmetry", "colorVerticalSymmetry", "intensityHorizontalSymmetry", "intensityVerticalSymmetry", "intensityHorizontalBalance", "intensityVerticalBalance", "numOfQuadTreeLeaves_color", "numOfQuadTreeLeaves_intensity", "colorEquilibrium", "intensityEquilibrium"), their_params = c(-.68, 0, 0, 2.45, 2.74, 1.60, 0, 0, 0, 1.85, -3.17, 0, 0, 0, -3.91, 1.01, 0, 0, 0.01, 0, -0.00000148, 0.00000186, 0.000374, 0, 0.06, 0, 0.03, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0))
+#follow up analysis to look at the original model with our data
+their_params = c(-.68, 0, 0, 2.45, 2.74, 1.60, 0, 0, 0, 1.85, -3.17, 0, 0, 0, -3.91, 1.01, 0, 0, 0.01, 0, -0.00000148, 0.00000186, 0.000374, 0, 0, 0.06, 0, 0.03, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
 
-#combined_params <- left_join(my_fit, their_data)
-#combined_params
-
-their_params = c(-.68, 0, 0, 2.45, 2.74, 1.60, 0, 0, 0, 1.85, -3.17, 0, 0, 0, -3.91, 1.01, 0, 0, 0.01, 0, -0.00000148, 0.00000186, 0.000374, 0, 0.06, 0, 0.03, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
-
-#fit$coefficients
+#fit is from my linear model above before stepwise elimination
 fit$coefficients[1:length(fit$coefficients)] <- their_params
-#fit$coefficients
-
 new_predictions <- predict(fit, data_for_lm_by_website)
-#new_predictions
 
-#https://stackoverflow.com/questions/45793683/r-determine-goodness-of-fit-of-new-data-with-predict-function-based-on-existin
+fit$coefficients
+
+# r-squared functions from: https://stackoverflow.com/questions/45793683/r-determine-goodness-of-fit-of-new-data-with-predict-function-based-on-existin
 r_squared <- function(vals, preds) {
   1 - (sum((vals - preds)^2) / sum((vals - mean(preds, na.rm = T))^2))
 }
@@ -504,11 +317,22 @@ r_squared_a <- function(vals, preds, k) {
   1 - ((1-r_squared(vals, preds))*(length(preds)-1))/(length(preds) - k - 1)
 }
 
-# Test
+#get r2 for their model with my data
 new_r2 <- r_squared(na.omit(data_for_lm_by_website$meanScore), na.omit(new_predictions))
 new_r2
 
+#get adjusted r2 for their model with my data
 new_r2_a <- r_squared_a(na.omit(data_for_lm_by_website$meanScore), na.omit(new_predictions), 13)
 new_r2_a
-#summary.lm
 ```
+
+We also did some follow up analysis to explore how well the original model explains our collected data. On our data their model had an adjusted r-squared value of `r round(new_r2_a, 2)`, as opposed to 0.78 on their original dataset. This finding that their model explains less of the variance in our data than in the original supports our concerns about some overfitting in the original model and the instability of the step-wise elimination procedure.
+
+## Discussion
+
+### Summary of Replication Attempt
+In this replication, the goal was building a model of colorfulness similar to the original result and then comparing the two models. `r length(in_both_models)` out of `r length(original_sig_factors)` of the significant factors in the original model appeared in the replication model. The Jaccard index corresponding the comparison between the two models indicated indicated only a moderate amount of overlap between the two models.
+
+
+### Commentary
+While we did not expect to replicate the original model exactly, we have gained some intution about why these types of models can be difficult to replicate. First, the original model had a large number of parameters, which can make the possbility of overfitting more likely. Also, there can be some variability in which image statistics are relevant based on the set of input images, and, as a result, the stepwise elimination process in the regression model can be unstable. In our replication, we only had sufficient ratings for `r num_final_websites` website images, instead of 435 like the original authors had. Given the instability of the stepwise elimination process, it is not surprising there were differences in the parameters in the original and replicated models. The challenge of looking at either the original or the replication model and reasoning about why certain image features were chosen over others, further leads us to consider the implications of building complex models with so many features.
