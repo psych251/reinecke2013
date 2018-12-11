@@ -9,11 +9,12 @@ The MTurk experiment runs in the browser using "slides." The user is shown a pra
 * mturk_experiment/experiment.js: the main functionality for running the experiment
 * mturk_experiment/style.css: styling for experiment website
 * mturk_experiment/website_stimuli/: folder containing all website images shown to participants
+* mturk_experiment/viz: interactive scatterplot for viewing the output model and website screenshots
 * preprocess.py: cleans the original image stats data from the authors; writes a CSV with just the image statistics and a JSON of excluded images
 * postprocess.py: combines the batch CSV from MTurk with the image statistics CSV in long form to prepare for R analysis
 * replication_data/: folder to hold intermediate inputs and outputs of replication process
 * writeup/: contains the R markdown file for the main write up
-* original_data/all.csv: the original data file provided by the authors
+* original_data/all.csv: the original data file provided by the authors (not included in this repo due to space concerns but available from [Lab in the Wild](http://www.labinthewild.org/data/index.php)
 * original_paper/: holds the PDF for the original paper
 
 
