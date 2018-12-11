@@ -1,3 +1,5 @@
+//plot inspired by: https://bl.ocks.org/ctufts/674ece47de093f6e0cd5af22d7ee9b9b
+
 var margin = {top: 20, right: 20, bottom: 50, left: 50},
     width = 500 - margin.left - margin.right,
     height = 400 - margin.top - margin.bottom;
