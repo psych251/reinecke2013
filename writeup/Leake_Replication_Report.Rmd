@@ -182,7 +182,7 @@ num_final_websites <- length(unique(data_for_lm_by_website$websiteName)) #number
 ```
 
 ### Confirmatory analysis
-The main contribution of the original paper's experiments that are the focus of this replication report is the model predicting users' ratings of a website's colorfulness from low-level image features of the website. We replicate this original model using our collected user colorfulness scores and the provided image statistics. We use multiple linear regression with backward elimination to eliminate not statistically significant image features and build our final model.
+The main contribution of the original paper's experiments that are the focus of this replication report is the model predicting users' ratings of a website's colorfulness from low-level image features of the website. We replicate this original model using our collected user colorfulness scores and the provided image statistics. We use multiple linear regression with backward elimination to eliminate not statistically significant image features and build our final model. 
 
 ```{r include = F}
 #### Create model
@@ -202,8 +202,8 @@ summary(stepped_model)
 replication_plot <- ggplot(stepped_model$model, aes_string(x = fitted(stepped_model), y = data_for_lm_by_website$meanScore)) +
   geom_point(na.rm=TRUE) +
   stat_smooth(method = "lm", col = "red", na.rm=TRUE) +
-  scale_x_continuous(limits=c(1, 9), breaks=seq(1,9,1))+
-  scale_y_continuous(limits=c(1, 9), breaks=seq(1,9,1))+
+  scale_x_continuous(limits=c(1, 9.5), breaks=seq(1,9,1))+
+  scale_y_continuous(limits=c(1, 9.5), breaks=seq(1,9,1))+
  labs(title = paste("Adj R2 = ",signif(summary(stepped_model)$adj.r.squared, 5),
                      "Intercept =",signif(stepped_model$coef[[1]],5 ),
                      " Slope =",signif(stepped_model$coef[[2]], 5),
@@ -229,6 +229,7 @@ replication_plot
 <!-- </figure> -->
 <!-- </div> -->
 
+We also provide an [interactive visualization](https://web.stanford.edu/~mleake/psych251/mturk_experiment/viz/) for inspecting the model and corresponding website screenshots.
 
 ###Exploratory analyses
 After building our model, our goal is to compare the model from this replication to the model the original authors provide. To do this we compare the sets of statistically significant image features in the two models and compute the Jaccard index. 
@@ -256,9 +257,7 @@ print(c("the jaccard index is: ", jaccard_index), quote = F)
 
 Using this method, we find a Jaccard index of `r round(jaccard_index, 3)` indicating roughly `r round(jaccard_index, 3)*100` percent similarity between the features in the two models. Both models indicate white, green, lime, colorfulness, number of image areas, number of leaves, text area, and non-text area are significant features. The following image features were in the original model, but were not found to be significant in the replication: gray, maroon, blue, teal, and saturation. Percentage of leaf area, number of text groups, intensity for hoizontal balance, number of quadtree leaves for color, color equilibrium, and intensity equilibrium are features that appear in the replication model but not in the original.
 
-To follow up our comparison of the two models, we examined the correlations between different image features.
-
-Although the authors did not report feature correlations, we also examine the feature correlations to help build intuition about about why different image features are included in the final model. Through this analysis we find some expected correlations between features, such as between text and non-text areas, but the reasoning behind others is less clear.
+To follow up our comparison of the two models, we examined the correlations between different image features. Although the authors did not report feature correlations, we also examine the feature correlations to help build intuition about about why different image features are included in the final model. Through this analysis we find some expected correlations between features, such as between text and non-text areas, but the reasoning behind others is less clear.
 
 ```{r include = F}
 #show model summary with feature correlations
@@ -336,3 +335,64 @@ In this replication, the goal was building a model of colorfulness similar to th
 
 ### Commentary
 While we did not expect to replicate the original model exactly, we have gained some intution about why these types of models can be difficult to replicate. First, the original model had a large number of parameters, which can make the possbility of overfitting more likely. Also, there can be some variability in which image statistics are relevant based on the set of input images, and, as a result, the stepwise elimination process in the regression model can be unstable. In our replication, we only had sufficient ratings for `r num_final_websites` website images, instead of 435 like the original authors had. Given the instability of the stepwise elimination process, it is not surprising there were differences in the parameters in the original and replicated models. The challenge of looking at either the original or the replication model and reasoning about why certain image features were chosen over others, further leads us to consider the implications of building complex models with so many features.
+
+
+```{r}
+library(jsonlite)
+head(data_for_lm_by_website)
+
+combined_data <- data.frame(data_for_lm_by_website$websiteName, data_for_lm_by_website$meanScore, fitted(stepped_model), fit$residuals)
+colnames(combined_data) <- c("websiteName", "userScore", "imageScore", "fittedValues")
+head(combined_data)
+
+#x <- toJSON(combined_data)
+#cat(x)
+
+data_for_lm_by_website[data_for_lm_by_website$websiteName == "english_328",]
+combined_data[data_for_lm_by_website$websiteName == "english_328",]
+```
+
+
+<!-- <style> -->
+<!-- .axis path, -->
+<!-- .axis line { -->
+<!--   fill: none; -->
+<!--   stroke: #000; -->
+<!--   shape-rendering: crispEdges; -->
+<!-- } -->
+
+<!-- .dot { -->
+<!--   stroke: #000; -->
+<!-- } -->
+
+<!-- .tooltip { -->
+<!--   position: absolute; -->
+<!--   width: 200px; -->
+<!--   height: 28px; -->
+<!--   pointer-events: none; -->
+<!-- } -->
+<!-- </style> -->
+<!-- <script src="d3.v3.min.js" charset="utf-8"></script> -->
+<!-- <script type="text/javascript" src="vizjs.js"></script> -->
+
+
+```{r}
+
+# library(shiny)
+# library(r2d3)
+# 
+# # Shiny app starts here
+# ui <- fluidPage(
+#     d3Output("d3")
+# )
+# 
+# server <- function(input, output) {
+#   output$d3 <- renderD3({
+#     r2d3(
+#      data = x, script = "scatterplot.js", css = "styles.css")
+#   })
+#     }
+# 
+# shinyApp(ui = ui, server = server)
+
+````
