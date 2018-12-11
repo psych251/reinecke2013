@@ -1,0 +1,42 @@
+body {
+  font-family: 'Montserrat';
+  font-size: 16px;
+  text-align: center;
+}
+circle{
+	fill: black;
+}
+.dot {
+  color: black;
+  fill: black;
+}
+
+.tooltip {
+  position: absolute;
+  width: 200px;
+  height: 28px;
+  pointer-events: none;
+}
+.tooltipimage {
+	max-width: 200px;
+}
+.axis path,
+.axis line {
+    fill: none;
+    stroke: black;
+    shape-rendering: crispEdges;
+}
+.regression {
+  stroke-width: 2px;
+  stroke: steelblue;
+  stroke-dasharray: 10,5;
+}
+img{
+	max-width: 200px
+}
+#main{
+  width: 100%;
+}
+h1, h3{
+  text-align: center
+}
