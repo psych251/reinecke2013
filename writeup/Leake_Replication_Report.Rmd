@@ -42,7 +42,7 @@ We follow a similar procedure to the one described in the original article as:
 > "The experiments were implemented as 10-minute online tests on our own experimental platform LabintheWild.org and advertised in online communities and university newsletters. Both experiments followed the same pattern: Participants were asked to rate screenshots of websites that were shown for 500ms each (following the experiment procedure in [23]). The small exposure time avoids an in-depth engagement with the content of the sites, and instead captures participants’ initial reactions towards colorfulness and visual complexity. In the first evaluation phase, we presented each participant with a stratified random sample of 30 websites selected from the larger pool of 450 websites. The 22 English, 4 foreign (using a different script), and 4 grayscale websites were presented in random order. Participants rated every website on a 9-point Likert scale from “not at all complex” to “very complex” or “not at all colorful” to “very colorful”, depending on the experiment. After being encouraged to take a short break, we gave a second evaluation phase where participants re-rated the same 30 websites in a different random order so that we could measure consistency in their judgement. Before the two evaluation phases, we gave a short practice phase during which all participants were asked to evaluate a fixed set of five websites, given in randomized order. We also collected demographic information about each participant, such as gender, age, education level, and current country of residence, in order to control for these factors in the analysis."
 
 ###Analysis Plan
-The goal of this analysis is to replicate the first set of experiments in Reinecke et. al, 2013. For all analyses we follow the the first of the data exclusion criteria the original authors describe: 
+The goal of this analysis is to replicate the first set of experiments in Reinecke et. al, 2013. For all analyses we follow the first of the data exclusion criteria the original authors describe: 
 
 > "We additionally excluded websites that had received three or fewer ratings (due to the random assignment to participants), or where the standard error of their mean complexity was ≥ 0.75." 
 
@@ -140,7 +140,7 @@ None.
 
 
 ### Data preparation
-We collect data for both the computational image statistics as well as users' ratings of website image colorfulness. First, we begin with the authors' computed image statstics. Each of these different image measurements is treated as a single variable in our regression. For each user we collect their age, country of residence, native language, highest level of education, and if they have normal or corrected-to-normal vision. We exclude all data from participants without normal or corrected-to-normal vision.
+We collect data for both the computational image statistics as well as users' ratings of website image colorfulness. First, we begin with the authors' computed image statistics. Each of these different image measurements is treated as a single variable in our regression. For each user we collect their age, country of residence, native language, highest level of education, and if they have normal or corrected-to-normal vision. We exclude all data from participants without normal or corrected-to-normal vision.
 
 For all of the analyses, the data are organized with each row as a different observation for user data (i.e., each participant, website, and trial matching). We merge the user data with the computational image metrics by adding columns to the data for each of the computational image metrics (16 HTML colors and 21 additional derived metrics), and then we group the data by website image. We then identify websites with three or fewer ratings and filter out this data.
 
@@ -247,7 +247,7 @@ print(c("the jaccard index is: ", jaccard_index), quote = F)
 ```
 
 
-Using this method, we find a Jaccard index of `r round(jaccard_index, 3)` indicating roughly `r round(jaccard_index, 3)*100` percent similarity between the features in the two models. Both models indicate white, green, lime, colorfulness, number of image areas, number of leaves, text area, and non-text area are significant features. The following image features were in the original model, but were not found to be significant in the replication: gray, maroon, blue, teal, and saturation. Percentage of leaf area, number of text groups, intensity for hoizontal balance, number of quadtree leaves for color, color equilibrium, and intensity equilibrium are features that appear in the replication model but not in the original.
+Using this method, we find a Jaccard index of `r round(jaccard_index, 3)` indicating roughly `r round(jaccard_index, 3)*100` percent similarity between the features in the two models. Both models indicate white, green, lime, colorfulness, number of image areas, number of leaves, text area, and non-text area are significant features. The following image features were in the original model, but were not found to be significant in the replication: gray, maroon, blue, teal, and saturation. Percentage of leaf area, number of text groups, intensity for horizontal balance, number of quadtree leaves for color, color equilibrium, and intensity equilibrium are features that appear in the replication model but not in the original.
 
 To follow up on our comparison of the two models, we examined the correlations between different image features. Although the authors did not report feature correlations, we also examine the feature correlations to help build intuition about about why different image features are included in the final model. Through this analysis we find some expected correlations between features, such as between text and non-text areas, but the reasoning behind others is less clear.
 
@@ -258,6 +258,7 @@ summary(stepped_model, correlation = TRUE)
 #get the feature correlations for the replication model
 corr_data <- summary(stepped_model, correlation = TRUE)$correlation
  
+# code from: http://www.sthda.com/english/wiki/print.php?id=191#reorder-the-correlation-matrix
 reorder_cormat <- function(cormat){
 # Use correlation between variables as distance
 dd <- as.dist((1-cormat)/2)
@@ -314,11 +315,11 @@ new_r2 <- r_squared(na.omit(data_for_lm_by_website$meanScore), na.omit(new_predi
 #get adjusted r2 for their model with my data
 new_r2_a <- r_squared_a(na.omit(data_for_lm_by_website$meanScore), na.omit(new_predictions), 13)
 
-print(c("the r^2 is: ", new_r2_a), quote = F)
-print(c("the adjusted r^2 is: ", new_r2), quote = F)
+print(c("the r^2 is: ", new_r2), quote = F)
+print(c("the adjusted r^2 is: ", new_r2_a), quote = F)
 ```
 
-We also did some follow up analysis to explore how well the original model explains our collected data. On our replication data their original model had an adjusted r-squared value of `r round(new_r2_a, 2)`, as opposed to 0.78 on their original dataset. This indicates that their model explains less of the variance in our data than in the original dataset.
+We also did some follow up analysis to explore how well the original model explains our collected data. On our replication data the original model had an adjusted r-squared value of `r round(new_r2_a, 2)`, as opposed to 0.78 on their original dataset. On our data their model's adjusted r-squared is lower than our model's adjusted r-squared (`r round(new_r2_a, 2)` vs. `r round(summary(stepped_model)$adj.r.squared, 2)`).
 
 ## Discussion
 
@@ -327,7 +328,7 @@ In this replication, the goal was building a model of colorfulness similar to th
 
 
 ### Commentary
-While we did not expect to replicate the original model exactly, we have gained some intution about why these types of models in HCI can be difficult to replicate. First, the original model had a large number of parameters, which can make the possbility of overfitting more likely. Also, there can be some variability in which image statistics are relevant based on the set of input images, and the stepwise elimination process in the regression model can be unstable. In our replication, we only had sufficient ratings for `r num_final_websites` website images, instead of 435 like the original authors had. Given the instability of the stepwise elimination process, it is not surprising there were differences in the parameters in the original and replicated models. We found it challenging to look at either the original or the replication model and reason about why certain image features instead of others were included in the final model. This further leads us to consider the implications of building these kinds of complex models with many different features.
+While we did not expect to replicate the original model exactly, we have gained some intuition about why these types of models in HCI can be difficult to replicate. First, the original model had a large number of parameters, which can make the possibility of overfitting more likely. In our replication we only had sufficient ratings for `r num_final_websites` website images, instead of 435 like the original authors had. There can be some variability in which image statistics are relevant based on the set of input images, and the stepwise elimination process in the regression model can be unstable. Perhaps the strongest indication of the effects of overfitting and instability in the features chosen is the similarity in the r-squared values of the two models but the dissimilarity in the specific features in the two models.  We found it challenging to look at either the original or the replication model and reason about why certain image features instead of others were included in the final model. This further leads us to consider the implications of building these kinds of complex models with many different features.
 
 
 ```{r Data prep for interactive visualization, include = F}
