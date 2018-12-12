@@ -14,7 +14,7 @@ The MTurk experiment runs in the browser using "slides." The user is shown a pra
 * postprocess.py: combines the batch CSV from MTurk with the image statistics CSV in long form to prepare for R analysis
 * replication_data/: folder to hold intermediate inputs and outputs of replication process
 * writeup/: contains the R markdown file for the main write up
-* original_data/all.csv: the original data file provided by the authors (not included in this repo due to space concerns but available from [Lab in the Wild](http://www.labinthewild.org/data/index.php)
+* original_data/all.csv: the original data file provided by the authors (not included in this repo due to space concerns but available from [Lab in the Wild](http://www.labinthewild.org/data/index.php))
 * original_paper/: holds the PDF for the original paper
 
 
